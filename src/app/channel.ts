@@ -4,8 +4,6 @@ export class Channel {
     private id: number;
     private status: ChannelStatus;
     private channelDistributionFunction: any;
-    private totalProcessingTime: number;
-    private processedTasksNumber: number;
 
     private onEdit$: Subject<any> = new Subject();
 
@@ -13,38 +11,35 @@ export class Channel {
         this.id = id;
         this.channelDistributionFunction = channelDistributionFunction;
         this.status = ChannelStatus.EMPTY;
-        this.processedTasksNumber = 0;
-        this.totalProcessingTime = 0;
     }
 
     getID() { return this.id; }
     getStatus() { return this.status; }
-    getProcessedTasksNumber() { return this.processedTasksNumber; }
-    getTotalProcessingTime() { return this.totalProcessingTime; }
 
     setStatus(newStatus: ChannelStatus) {
         this.status = newStatus;
     }
 
     takeTask() {
-        // tslint:disable-next-line:no-debugger
-        debugger;
         if (this.status === ChannelStatus.EMPTY) {
 
-            let processingTime;
+            let processingTime = 0;
             this.status = ChannelStatus.SERVICE;
             const that = this;
-            // tslint:disable-next-line:no-debugger
-            debugger;
-            this.totalProcessingTime += (processingTime = this.channelDistributionFunction());
+
+            console.log(processingTime);
+            console.log(this.channelDistributionFunction);
+            console.log(this.channelDistributionFunction());
+
+            processingTime = this.channelDistributionFunction();
             setTimeout(function () {
                 that.status = 0;
-                console.log('prepe');
                 that.onEdit$.next(true);
-                console.log('ok');
-                return that.processedTasksNumber++;
+
+                console.log(this.totalProcessingTime);
             }
                 , processingTime);
+            this.status = ChannelStatus.EMPTY;
             return true;
         }
         return false;

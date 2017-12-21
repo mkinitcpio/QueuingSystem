@@ -8,9 +8,10 @@ import { OnInit } from '@angular/core';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
-  timeCounter = 1;
+  timeCounter = 1000;
   counter = 0;
   channel: Channel;
+
   ngOnInit(): void {
     this.channel = new Channel(1, this.getTimer);
 
@@ -22,7 +23,7 @@ export class AppComponent implements OnInit {
   }
 
   getTimer() {
-    return this.timeCounter++;
+    return this.timeCounter;
   }
 
   check(): void {
