@@ -1,7 +1,6 @@
 import { Task } from './task';
 import { Subject } from 'rxjs/Subject';
 
-declare module '@q-app' {
     export interface Completed {
         task: Task;
         idChannel: number;
@@ -17,4 +16,3 @@ declare module '@q-app' {
         onEdit(): Subject<any>;
         getChannelDistributionFunction(intensity: number);
     }
-}
