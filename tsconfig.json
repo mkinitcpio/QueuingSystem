@@ -1,8 +1,13 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "lib": ["es2015", "dom"],
     "module": "commonjs",
-    "outFile": "build/bundle.js",
-    "strict": true
+    "moduleResolution": "node",
+    "sourceMap": true,
+    "strict": true,
+    "suppressImplicitAnyIndexErrors": true,
+    "target": "es5",
   }
 }
