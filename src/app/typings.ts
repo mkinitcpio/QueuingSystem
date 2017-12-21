@@ -16,3 +16,14 @@ export enum ChannelStatus {
     BLOCK,
     SERVICE
 }
+
+export interface Options {
+    firstPhase: {
+        channelCount: number,
+        accumulatorCapacity: number,
+        maxWaitingTime: number
+    },
+    secondPhase: {
+        channelCount: number
+    },
+}
