@@ -35,7 +35,8 @@ export class Channel {
 
                 const completed: Completed = {
                     task: task,
-                    idChannel: that.id
+                    idChannel: that.id,
+                    timeInChannel: processingTime
                 };
                 that.onEdit$.next(completed);
             }

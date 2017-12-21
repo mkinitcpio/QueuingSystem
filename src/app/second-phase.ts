@@ -1,6 +1,6 @@
 import { Subject } from 'rxjs';
 
-import { Phase, Completed, ChannelStatus } from './typings';
+import { Phase, Completed, ChannelStatus, Request } from './typings';
 import { Task } from './task';
 import { Channel } from './channel';
 import { of } from 'rxjs/observable/of';
@@ -16,15 +16,16 @@ export class SecondPhase implements Phase {
 
     private createChannels(channelsCount: number, distributionFunction: any): void {
         for (let i = 0; i < channelsCount; i++) {
-            this.channels[i] = new Channel(i + 1, distributionFunction);
+            this.channels[i] = new Channel(i, distributionFunction);
         }
     }
 
-    public setTask(task: Task): boolean {
-        if (this.check(task)) {
-            return true;
+    public setTask(task: Task): Request {
+        const request: Request = this.check(task);
+        if (request.isStartProcessing) {
+            return request;
         } else {
-            return false;
+            return request;
         }
     }
 
@@ -32,20 +33,27 @@ export class SecondPhase implements Phase {
         return this.completed$;
     }
 
-    private check(task: Task): boolean {
+    private check(task: Task): Request {
         for (let i = 0; i < this.channels.length; i++) {
             if (this.channels[i].takeTask(task)) {
-                return true;
+                const request: Request = {
+                    isStartProcessing: true,
+                    idChannel: i
+                };
+                return request;
             }
         }
-        return false;
+        return {
+            isStartProcessing: false,
+            idChannel: -1
+        };
     }
 
     private onChange(): void {
         for (let i = 0; i < this.channels.length; i++) {
             this.channels[i].onEdit().subscribe((completed: Completed) => {
                 this.completed$.next(completed);
-                this.channels[completed.idChannel - 1].setStatus(ChannelStatus.EMPTY);
+                this.channels[completed.idChannel].setStatus(ChannelStatus.EMPTY);
             });
         }
     }

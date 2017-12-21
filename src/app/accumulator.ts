@@ -2,7 +2,7 @@ import { Task } from './task';
 
 export class Accumulator {
     private readonly capacity: number;
-    private requestList: Array<Task> = [];
+    private taskList: Array<Task> = [];
     private readonly maxLifeTime: number;
 
     constructor(capacity: number, taskInAccumulatorMaxTime: number) {
@@ -12,22 +12,22 @@ export class Accumulator {
 
     public addTask(task: Task): void {
         if (this.isAccumulatorAvailable()) {
-            this.requestList.push(task);
+            this.taskList.push(task);
         }
         setTimeout(() => {
-            this.requestList = this.requestList.filter((value) => task !== value);
+            this.taskList = this.taskList.filter((value) => task !== value);
         }, this.maxLifeTime);
     }
 
     public getTast(): Task {
-        return this.requestList.shift();
+        return this.taskList.shift();
     }
 
     public isAccumulatorAvailable() {
-        return this.requestList.length < this.capacity;
+        return this.taskList.length < this.capacity;
     }
 
     public count() {
-        return this.requestList.length;
+        return this.taskList.length;
     }
 }

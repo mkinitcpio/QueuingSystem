@@ -1,4 +1,4 @@
-import { Phase, Completed, ChannelStatus } from './typings';
+import { Phase, Completed, ChannelStatus, Request } from './typings';
 import { Task } from './task';
 import { Subject } from 'rxjs';
 import { Channel } from './channel';
@@ -22,7 +22,7 @@ export class FirstPhase implements Phase {
 
     private createChannels(channelsCount: number, distributionFunction: any): void {
         for (let i = 0; i < channelsCount; i++) {
-            this.channels[i] = new Channel(i + 1, distributionFunction);
+            this.channels[i] = new Channel(i, distributionFunction);
         }
     }
 
@@ -30,41 +30,58 @@ export class FirstPhase implements Phase {
         this.accumulator = new Accumulator(accumulatorCapacity, taskInAccumulatorMaxTime);
     }
 
-    private check(task: Task): boolean {
+    private check(task: Task): Request {
         for (let i = 0; i < this.channels.length; i++) {
             if (this.channels[i].takeTask(task)) {
-                return true;
+                const request: Request = {
+                    isStartProcessing: true,
+                    idChannel: i
+                };
+                return request;
             }
         }
         if (this.accumulator.isAccumulatorAvailable()) {
             this.accumulator.addTask(task);
-            return true;
+            return {
+                isStartProcessing: true,
+                idChannel: -1
+            };
         }
-        return false;
+        return {
+            isStartProcessing: false,
+            idChannel: -1
+        };
     }
 
     private onChange(): void {
         for (let i = 0; i < this.channels.length; i++) {
             this.channels[i].onEdit().subscribe((completed: Completed) => {
                 this.completed$.next(completed);
-                this.channels[completed.idChannel - 1].setStatus(ChannelStatus.EMPTY);
-                if (this.accumulator.count() > 0) {
-                    this.check(this.accumulator.getTast());
+                if (this.channels[completed.idChannel].getStatus() !== ChannelStatus.BLOCK) {
+                    this.channels[completed.idChannel].setStatus(ChannelStatus.EMPTY);
+
+                    if (this.accumulator.count() > 0) {
+                        this.check(this.accumulator.getTast());
+                    }
                 }
             });
         }
     }
 
-    public setTask(task: Task): boolean {
-        if (this.check(task)) {
-            return true;
+    public setTask(task: Task): Request {
+        const request: Request = this.check(task);
+        if (request.isStartProcessing) {
+            return request;
         } else {
-            return false;
+            return request;
         }
     }
+
     public getCompleted(): Subject<Completed> {
         return this.completed$;
     }
 
-
+    public block(id: number, state: boolean): void {
+        this.channels[id].setStatus(ChannelStatus.BLOCK);
+    }
 }
