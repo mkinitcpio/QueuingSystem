@@ -2,8 +2,13 @@ import { Component } from '@angular/core';
 import { OnInit } from '@angular/core';
 import { Channel } from './channel';
 import { SecondPhase } from './second-phase';
-import { Phase, Completed } from './typings';
+import { Phase, Completed, Options } from './typings';
 import { Task } from './task';
+import { QueuingSystem } from './queuing-system';
+import { Source } from './source';
+import { ExponentialDistributionFunctionFactory } from './factories/exponential-distribution-function-factory';
+import { Logger } from './logger';
+import { NormalDistributionFunctionFactory } from './factories/normal-distribution-function-factory';
 
 @Component({
   selector: 'app-root',
@@ -12,39 +17,34 @@ import { Task } from './task';
 })
 export class AppComponent implements OnInit {
 
-  private secondPhase: Phase = new SecondPhase(2, this.getTime);
-
-  private firstTask: Task = new Task('1');
-  private secondTask: Task = new Task('2');
-  private thirdTask: Task = new Task('3');
-
   ngOnInit(): void {
-    if (this.secondPhase.setTask(this.firstTask)) {
-      console.log('First Ok');
-    } else {
-      console.log('First BAD');
-    }
-    if (this.secondPhase.setTask(this.secondTask)) {
-      console.log('Second Ok');
-    } else {
-      console.log('Second BAD');
-    }
-    if (this.secondPhase.setTask(this.thirdTask)) {
-      console.log('Third Ok');
-    } else {
-      console.log('Third BAD');
-    }
 
-    this.secondPhase.getCompleted().subscribe((completed: Completed) => {
-      this.log(completed);
-    });
-  }
+    let normalDistributionFunction = new NormalDistributionFunctionFactory().get(0.1);
+    let exponentialDistributionFunction = new ExponentialDistributionFunctionFactory().get(0.1);
 
-  private getTime(): number {
-    return 5000;
-  }
+    let source = new Source(1000, exponentialDistributionFunction);
 
-  private log(completed: Completed) {
-    console.log(completed.idChannel, completed.task.getID());
+    let options: Options = {
+      firstPhase: {
+        accumulatorCapacity: 3,
+        channelCount: 6,
+        maxWaitingTime: 10,
+        distributionFunction: normalDistributionFunction
+      },
+      secondPhase: {
+        channelCount: 6,
+        distributionFunction: exponentialDistributionFunction
+      }
+    };
+
+    let system = new QueuingSystem(
+      source,
+      options
+    );
+
+    system.onFinish.subscribe(() => {
+      Logger.write('Source пустой.');
+    })
+    system.start();
   }
 }

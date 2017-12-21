@@ -33,22 +33,22 @@ export class Source {
 
     public activate(): void {
         this.intervalsEmitter$.subscribe((interval: number) => {
-            let timerSubscrition = Observable.timer(interval).subscribe(() => {
+            let timerSubscription = Observable.timer(interval).subscribe(() => {
                 let task = new Task(<any>IdGenerator.generate());
                 
-                if (!this.isItervalsEmpty) {
+                if (!this.isIntervalsEmpty) {
                     this.taskEmitter$.next(task);
                     this.intervalsEmitter$.next(this.intervals.shift());
                 }else{
                     this.taskEmitter$.next(task);
                     this.onEmptySource$.next();
                 }
-                timerSubscrition.unsubscribe();
+                timerSubscription.unsubscribe();
             })
         });
     }
 
-    private get isItervalsEmpty(): boolean{
+    private get isIntervalsEmpty(): boolean{
         return this.intervals.length === 0;
     }
 }

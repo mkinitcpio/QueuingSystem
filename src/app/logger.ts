@@ -17,7 +17,7 @@ export class Logger {
         console.log(`Заявка ${taskId} начала обрабатываться в фазе ${phaseId} каналом ${channelId}.`);
     }
 
-    static OnCompletedTask(
+    static onCompletedTask(
         phaseId: number,
         channelId: number,
         taskId: string,
