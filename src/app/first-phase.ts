@@ -82,6 +82,10 @@ export class FirstPhase implements Phase {
     }
 
     public block(id: number, state: boolean): void {
-        this.channels[id].setStatus(ChannelStatus.BLOCK);
+        if (state) {
+            this.channels[id].setStatus(ChannelStatus.BLOCK);
+        } else {
+            this.channels[id].setStatus(ChannelStatus.EMPTY);
+        }
     }
 }
