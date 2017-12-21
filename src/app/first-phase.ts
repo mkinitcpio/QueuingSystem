@@ -61,7 +61,7 @@ export class FirstPhase implements Phase {
                     this.channels[completed.idChannel].setStatus(ChannelStatus.EMPTY);
 
                     if (this.accumulator.count() > 0) {
-                        this.check(this.accumulator.getTast());
+                        this.check(this.accumulator.getTask().task);
                     }
                 }
             });

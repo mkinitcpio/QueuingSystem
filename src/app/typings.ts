@@ -7,6 +7,11 @@ export interface Completed {
     timeInChannel: number;
 }
 
+export interface AccumulationTask {
+    task: Task;
+    timeInAccumulator: number;
+}
+
 export interface Request {
     isStartProcessing: boolean;
     idChannel: number;
