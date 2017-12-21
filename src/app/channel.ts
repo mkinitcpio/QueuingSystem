@@ -1,9 +1,13 @@
+import { Subject } from 'rxjs/Subject';
+
 export class Channel {
     private id: number;
     private status: ChannelStatus;
     private channelDistributionFunction: any;
     private totalProcessingTime: number;
     private processedTasksNumber: number;
+
+    private onEdit$: Subject<any> = new Subject();
 
     constructor(id: number, channelDistributionFunction: any) {
         this.id = id;
@@ -23,14 +27,21 @@ export class Channel {
     }
 
     takeTask() {
+        // tslint:disable-next-line:no-debugger
+        debugger;
         if (this.status === ChannelStatus.EMPTY) {
 
             let processingTime;
             this.status = ChannelStatus.SERVICE;
             const that = this;
+            // tslint:disable-next-line:no-debugger
+            debugger;
             this.totalProcessingTime += (processingTime = this.channelDistributionFunction());
             setTimeout(function () {
                 that.status = 0;
+                console.log('prepe');
+                that.onEdit$.next(true);
+                console.log('ok');
                 return that.processedTasksNumber++;
             }
                 , processingTime);
@@ -38,7 +49,12 @@ export class Channel {
         }
         return false;
     }
+
+    onEdit(): Subject<any> {
+        return this.onEdit$;
+    }
 }
+
 export enum ChannelStatus {
     EMPTY,
     BLOCK,
