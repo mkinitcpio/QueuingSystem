@@ -34,23 +34,38 @@ export class QueuingSystem {
 
     public start(): void {
         this.firstPhase.getCompleted().subscribe(completed => {
-            if (!this.secondPhase.setTask(completed.task)) {
-                Logger.rejectTask(completed.task.getID(), Phases.Second);
+            Logger.onCompletedTask(
+                Phases.First,
+                completed.idChannel,
+                completed.task.getID(),
+                completed.timeInChannel
+            )
+            let request = this.secondPhase.setTask(completed.task);
+            console.log(request);
+            if (request.isStartProcessing) {
+                Logger.startProcessingTask(completed.task.getID(), Phases.Second, request.idChannel);
             } else {
-                Logger.startProcessingTask(completed.task.getID(), Phases.Second, null);
+                Logger.rejectTask(completed.task.getID(), Phases.Second);
             }
         });
 
         this.secondPhase.getCompleted().subscribe(completed => {
-            Logger.successfullyCompletedTask(completed.task.getID(), Phases.First);
+            Logger.onCompletedTask(
+                Phases.Second,
+                completed.idChannel,
+                completed.task.getID(),
+                completed.timeInChannel
+            )
+            Logger.successfullyCompletedTask(completed.task.getID(), Phases.Second);
         });
 
         this.source.taskEmitter.subscribe(task => {
             Logger.newTaskAppeared(task.getID());
-            if (!this.firstPhase.setTask(task)) {
-                Logger.rejectTask(task.getID(), Phases.First);
+            let request = this.firstPhase.setTask(task);
+            if (request.isStartProcessing) {
+                Logger.startProcessingTask(task.getID(), Phases.First, request.idChannel);
             } else {
-                Logger.startProcessingTask(task.getID(), Phases.First, null);
+                Logger.rejectTask(task.getID(), Phases.First);
             }
         });
 
