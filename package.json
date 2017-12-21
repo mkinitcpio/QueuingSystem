@@ -1,0 +1,26 @@
+{
+  "name": "queuingsystem",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mkinitcpio/QueuingSystem.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mkinitcpio/QueuingSystem/issues"
+  },
+  "homepage": "https://github.com/mkinitcpio/QueuingSystem#readme",
+  "devDependencies": {
+    "typescript": "^2.6.2"
+  },
+  "dependencies": {
+    "rxjs": "^5.5.5"
+  }
+}
