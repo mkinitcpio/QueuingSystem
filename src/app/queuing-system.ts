@@ -15,8 +15,6 @@ export class QueuingSystem {
 
     constructor(
         private source: Source,
-        firstPhaseDistributionFunction: Function,
-        secondPhaseDistributionFunction: Function,
         options: Options
     ) {
         this.onFinish$ = new Subject();
@@ -25,12 +23,12 @@ export class QueuingSystem {
             options.firstPhase.channelCount,
             options.firstPhase.accumulatorCapacity,
             options.firstPhase.maxWaitingTime,
-            firstPhaseDistributionFunction
+            options.firstPhase.distributionFunction,
         );
 
         this.secondPhase = new SecondPhase(
             options.secondPhase.channelCount,
-            secondPhaseDistributionFunction
+            options.secondPhase.distributionFunction
         );
     }
 
@@ -59,7 +57,7 @@ export class QueuingSystem {
         this.source.onEmptySource.subscribe(() => {
             this.onFinish$.next();
         });
-        
+
         this.source.activate();
     }
 

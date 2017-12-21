@@ -21,10 +21,12 @@ export interface Options {
     firstPhase: {
         channelCount: number,
         accumulatorCapacity: number,
-        maxWaitingTime: number
+        maxWaitingTime: number,
+        distributionFunction: Function
     },
     secondPhase: {
-        channelCount: number
+        channelCount: number,
+        distributionFunction: Function
     },
 }
 
