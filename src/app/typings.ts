@@ -27,3 +27,8 @@ export interface Options {
         channelCount: number
     },
 }
+
+export enum Phases{
+        First = 1,
+        Second = 2
+}
