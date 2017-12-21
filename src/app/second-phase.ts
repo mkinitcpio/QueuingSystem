@@ -11,6 +11,7 @@ export class SecondPhase implements Phase {
 
     constructor(channelsCount: number, distributionFunction: any) {
         this.createChannels(channelsCount, distributionFunction);
+        this.onChange();
     }
 
     private createChannels(channelsCount: number, distributionFunction: any): void {
