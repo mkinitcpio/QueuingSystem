@@ -1,15 +1,17 @@
 import { Subject } from 'rxjs/Subject';
+import { Completed, ChannelStatus } from './typings';
+import { Task } from './task';
 
 export class Channel {
     private id: number;
     private status: ChannelStatus;
     private channelDistributionFunction: any;
 
-    private onEdit$: Subject<any> = new Subject();
+    private onEdit$: Subject<Completed> = new Subject();
 
-    constructor(id: number, channelDistributionFunction: any) {
+    constructor(id: number, distributionFunction: any) {
         this.id = id;
-        this.channelDistributionFunction = channelDistributionFunction;
+        this.channelDistributionFunction = distributionFunction;
         this.status = ChannelStatus.EMPTY;
     }
 
@@ -20,23 +22,21 @@ export class Channel {
         this.status = newStatus;
     }
 
-    takeTask() {
+    takeTask(task: Task) {
         if (this.status === ChannelStatus.EMPTY) {
 
             let processingTime = 0;
             this.status = ChannelStatus.SERVICE;
             const that = this;
 
-            console.log(processingTime);
-            console.log(this.channelDistributionFunction);
-            console.log(this.channelDistributionFunction());
-
             processingTime = this.channelDistributionFunction();
             setTimeout(function () {
                 that.status = 0;
-                that.onEdit$.next(true);
-
-                console.log(this.totalProcessingTime);
+                const completed: Completed = {
+                    task: task,
+                    idChannel: this.id
+                };
+                that.onEdit$.next(completed);
             }
                 , processingTime);
             this.status = ChannelStatus.EMPTY;
@@ -45,13 +45,7 @@ export class Channel {
         return false;
     }
 
-    onEdit(): Subject<any> {
+    onEdit(): Subject<Completed> {
         return this.onEdit$;
     }
-}
-
-export enum ChannelStatus {
-    EMPTY,
-    BLOCK,
-    SERVICE
 }

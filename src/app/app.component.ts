@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { OnInit } from '@angular/core';
+import { Channel } from './channel';
 
 @Component({
   selector: 'app-root',
@@ -8,5 +9,5 @@ import { OnInit } from '@angular/core';
 })
 export class AppComponent implements OnInit {
 
-  ngOnInit(): void { }
+  ngOnInit(): void {  }
 }
