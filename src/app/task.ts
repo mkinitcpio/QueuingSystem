@@ -1,11 +1,11 @@
 export class Task {
-    id: string;
+    private id: string;
 
     constructor(id: string) {
         this.id = id;
     }
 
-    getID(): string {
+    public getID(): string {
         return this.id;
     }
 }

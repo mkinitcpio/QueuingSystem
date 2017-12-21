@@ -20,7 +20,7 @@ export class SecondPhase implements Phase {
         }
     }
 
-    setTask(task: Task): boolean {
+    public setTask(task: Task): boolean {
         if (this.check(task)) {
             return true;
         } else {
@@ -28,11 +28,11 @@ export class SecondPhase implements Phase {
         }
     }
 
-    getCompleted(): Subject<Completed> {
+    public getCompleted(): Subject<Completed> {
         return this.completed$;
     }
 
-    check(task: Task): boolean {
+    private check(task: Task): boolean {
         for (let i = 0; i < this.channels.length; i++) {
             if (this.channels[i].takeTask(task)) {
                 return true;
@@ -41,7 +41,7 @@ export class SecondPhase implements Phase {
         return false;
     }
 
-    onChange(): void {
+    private onChange(): void {
         for (let i = 0; i < this.channels.length; i++) {
             this.channels[i].onEdit().subscribe((completed: Completed) => {
                 this.completed$.next(completed);

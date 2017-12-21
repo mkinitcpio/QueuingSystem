@@ -7,13 +7,8 @@ export interface Completed {
 }
 
 export interface Phase {
-    // public
     setTask(task: Task): boolean;
     getCompleted(): Subject<Completed>;
-
-    // private
-    check(task: Task): boolean;
-    onChange(): void;
 }
 
 export enum ChannelStatus {

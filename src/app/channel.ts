@@ -15,14 +15,14 @@ export class Channel {
         this.status = ChannelStatus.EMPTY;
     }
 
-    getID() { return this.id; }
-    getStatus() { return this.status; }
+    public getID() { return this.id; }
+    public getStatus() { return this.status; }
 
-    setStatus(newStatus: ChannelStatus) {
+    public setStatus(newStatus: ChannelStatus) {
         this.status = newStatus;
     }
 
-    takeTask(task: Task) {
+    public takeTask(task: Task) {
         if (this.status === ChannelStatus.EMPTY) {
 
             let processingTime = 0;
@@ -31,21 +31,20 @@ export class Channel {
 
             processingTime = this.channelDistributionFunction();
             setTimeout(function () {
-                that.status = 0;
                 const completed: Completed = {
                     task: task,
-                    idChannel: this.id
+                    idChannel: that.id
                 };
                 that.onEdit$.next(completed);
+                this.status = ChannelStatus.EMPTY;
             }
                 , processingTime);
-            this.status = ChannelStatus.EMPTY;
             return true;
         }
         return false;
     }
 
-    onEdit(): Subject<Completed> {
+    public onEdit(): Subject<Completed> {
         return this.onEdit$;
     }
 }
