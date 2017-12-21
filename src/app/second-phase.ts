@@ -1,6 +1,6 @@
 import { Subject } from 'rxjs';
 
-import { Phase, Completed } from './typings';
+import { Phase, Completed, ChannelStatus } from './typings';
 import { Task } from './task';
 import { Channel } from './channel';
 import { of } from 'rxjs/observable/of';
@@ -45,6 +45,7 @@ export class SecondPhase implements Phase {
         for (let i = 0; i < this.channels.length; i++) {
             this.channels[i].onEdit().subscribe((completed: Completed) => {
                 this.completed$.next(completed);
+                this.channels[completed.idChannel - 1].setStatus(ChannelStatus.EMPTY);
             });
         }
     }

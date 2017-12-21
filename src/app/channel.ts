@@ -31,12 +31,13 @@ export class Channel {
 
             processingTime = this.channelDistributionFunction();
             setTimeout(function () {
+                this.status = ChannelStatus.EMPTY;
+
                 const completed: Completed = {
                     task: task,
                     idChannel: that.id
                 };
                 that.onEdit$.next(completed);
-                this.status = ChannelStatus.EMPTY;
             }
                 , processingTime);
             return true;
