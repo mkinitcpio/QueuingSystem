@@ -35,10 +35,10 @@ export class QueuingSystem {
 
 
         this.source.taskEmitter.subscribe(task => {
-            console.log('is emit', task);
+            // console.log('is emit', task);
             Logger.newTaskAppeared(task.getID());
             let request = this.firstPhase.setTask(task);
-            console.log('start process', request);
+            // console.log('start process', request);
             if (request.isStartProcessing) {
                 Logger.startProcessingTask(task.getID(), Phases.First, request.idChannel);
             } else {
@@ -51,7 +51,7 @@ export class QueuingSystem {
         });
 
         this.firstPhase.getCompleted().subscribe(completed => {
-            console.log(completed);
+            // console.log(completed);
             Logger.onCompletedTask(
                 Phases.First,
                 completed.idChannel,
@@ -67,7 +67,7 @@ export class QueuingSystem {
         });
 
         this.secondPhase.getCompleted().subscribe(completed => {
-            console.log('completed', completed);
+            // console.log('completed', completed);
             Logger.onCompletedTask(
                 Phases.Second,
                 completed.idChannel,
