@@ -36,7 +36,6 @@ export class Source {
             interval = interval * 100;
             let timerSubscription = Observable.timer(interval).subscribe(() => {
                 let task = new Task(<any>IdGenerator.generate());
-                // console.log('time generate task', interval, task);
                 if (!this.isIntervalsEmpty) {
                     this.taskEmitter$.next(task);
                     this.intervalsEmitter$.next(this.intervals.shift());

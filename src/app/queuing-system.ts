@@ -9,9 +9,13 @@ import { Logger } from "./logger";
 
 export class QueuingSystem {
 
-    private firstPhase: Phase;
-    private secondPhase: Phase;
+    private firstPhase: FirstPhase;
+    private secondPhase: SecondPhase;
     private onFinish$: Subject<void>;
+    private waitingTasks: Array<{
+        channelId: number,
+        task: Task
+    }> = [];
 
     constructor(
         private source: Source,
@@ -32,15 +36,15 @@ export class QueuingSystem {
     }
 
     public start(): void {
-
-
         this.source.taskEmitter.subscribe(task => {
-            // console.log('is emit', task);
             Logger.newTaskAppeared(task.getID());
             let request = this.firstPhase.setTask(task);
-            // console.log('start process', request);
             if (request.isStartProcessing) {
-                Logger.startProcessingTask(task.getID(), Phases.First, request.idChannel);
+                if (request.idChannel === -1) {
+                    Logger.addTaskToAccumulator(task.getID(), Phases.First);
+                } else {
+                    Logger.startProcessingTask(task.getID(), Phases.First, request.idChannel);
+                }
             } else {
                 Logger.rejectTask(task.getID(), Phases.First);
             }
@@ -51,29 +55,40 @@ export class QueuingSystem {
         });
 
         this.firstPhase.getCompleted().subscribe(completed => {
-            // console.log(completed);
             Logger.onCompletedTask(
                 Phases.First,
                 completed.idChannel,
                 completed.task.getID(),
                 completed.timeInChannel
-            )
-            let request = this.secondPhase.setTask(completed.task);
-            if (request.isStartProcessing) {
-                Logger.startProcessingTask(completed.task.getID(), Phases.Second, request.idChannel);
+            );
+            if (this.waitingTasks.length != 0) {
+                let waitingTask = this.waitingTasks.shift();
+                this.secondPhase.setTask(waitingTask.task);
+                Logger.unblockChannel(Phases.First, waitingTask.channelId);
+                this.firstPhase.block(waitingTask.channelId, false);
             } else {
-                Logger.rejectTask(completed.task.getID(), Phases.Second);
+                let request = this.secondPhase.setTask(completed.task);
+                if (request.isStartProcessing) {
+                    Logger.startProcessingTask(completed.task.getID(), Phases.Second, request.idChannel);
+                } else {
+                    Logger.rejectTask(completed.task.getID(), Phases.Second);
+                    this.firstPhase.block(completed.idChannel, true);
+                    this.waitingTasks.push({
+                        channelId: completed.idChannel,
+                        task: completed.task
+                    });
+                    Logger.blockChannel(Phases.First, completed.idChannel);
+                }
             }
         });
 
         this.secondPhase.getCompleted().subscribe(completed => {
-            // console.log('completed', completed);
             Logger.onCompletedTask(
                 Phases.Second,
                 completed.idChannel,
                 completed.task.getID(),
                 completed.timeInChannel
-            )
+            );
             Logger.successfullyCompletedTask(completed.task.getID(), Phases.Second);
         });
 

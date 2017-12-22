@@ -26,10 +26,31 @@ export class Logger {
         console.log(`Заявка ${taskId} обработана фазой ${phaseId} каналом ${channelId} за время ${time}ms.`);
     }
 
+    static addTaskToAccumulator(
+        taskId: string,
+        phaseId: number
+    ): void {
+        console.log(`Заявка ${taskId} ожидает в очереди ${phaseId} фазы.`);
+    };
+
     static resultTimeOfProcessingTask(
         time: number
     ): void {
         console.log(`Время обработки заявки: ${time}.`);
+    }
+
+    static blockChannel(
+        phaseId: number,
+        channelId: number
+    ): void {
+        console.log(`Блокировка канала: ${channelId} в ${phaseId} фазе.`);
+    }
+
+    static unblockChannel(
+        phaseId: number,
+        channelId: number
+    ): void {
+        console.log(`Разблокировка канала: ${channelId} в ${phaseId} фазе.`);
     }
 
     static rejectTask(
