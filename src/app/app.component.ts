@@ -20,19 +20,19 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {
 
     let normalDistributionFunction = new NormalDistributionFunctionFactory().get(0.1);
-    let exponentialDistributionFunction = new ExponentialDistributionFunctionFactory().get(0.1);
-
-    let source = new Source(1000, exponentialDistributionFunction);
+    let exponentialDistributionFunction = new ExponentialDistributionFunctionFactory().get(0.2);
+    let exponentialDistributionFunction1 = new ExponentialDistributionFunctionFactory().get(1);
+    let source = new Source(50, exponentialDistributionFunction1);
 
     let options: Options = {
       firstPhase: {
-        accumulatorCapacity: 3,
-        channelCount: 6,
-        maxWaitingTime: 10,
+        accumulatorCapacity: 10,
+        channelCount: 5,
+        maxWaitingTime: 300,
         distributionFunction: normalDistributionFunction
       },
       secondPhase: {
-        channelCount: 6,
+        channelCount: 3,
         distributionFunction: exponentialDistributionFunction
       }
     };

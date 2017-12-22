@@ -25,7 +25,6 @@ export class QueuingSystem {
             options.firstPhase.maxWaitingTime,
             options.firstPhase.distributionFunction,
         );
-
         this.secondPhase = new SecondPhase(
             options.secondPhase.channelCount,
             options.secondPhase.distributionFunction
@@ -33,35 +32,13 @@ export class QueuingSystem {
     }
 
     public start(): void {
-        this.firstPhase.getCompleted().subscribe(completed => {
-            Logger.onCompletedTask(
-                Phases.First,
-                completed.idChannel,
-                completed.task.getID(),
-                completed.timeInChannel
-            )
-            let request = this.secondPhase.setTask(completed.task);
-            console.log(request);
-            if (request.isStartProcessing) {
-                Logger.startProcessingTask(completed.task.getID(), Phases.Second, request.idChannel);
-            } else {
-                Logger.rejectTask(completed.task.getID(), Phases.Second);
-            }
-        });
 
-        this.secondPhase.getCompleted().subscribe(completed => {
-            Logger.onCompletedTask(
-                Phases.Second,
-                completed.idChannel,
-                completed.task.getID(),
-                completed.timeInChannel
-            )
-            Logger.successfullyCompletedTask(completed.task.getID(), Phases.Second);
-        });
 
         this.source.taskEmitter.subscribe(task => {
+            console.log('is emit', task);
             Logger.newTaskAppeared(task.getID());
             let request = this.firstPhase.setTask(task);
+            console.log('start process', request);
             if (request.isStartProcessing) {
                 Logger.startProcessingTask(task.getID(), Phases.First, request.idChannel);
             } else {
@@ -71,6 +48,33 @@ export class QueuingSystem {
 
         this.source.onEmptySource.subscribe(() => {
             this.onFinish$.next();
+        });
+
+        this.firstPhase.getCompleted().subscribe(completed => {
+            console.log(completed);
+            Logger.onCompletedTask(
+                Phases.First,
+                completed.idChannel,
+                completed.task.getID(),
+                completed.timeInChannel
+            )
+            let request = this.secondPhase.setTask(completed.task);
+            if (request.isStartProcessing) {
+                Logger.startProcessingTask(completed.task.getID(), Phases.Second, request.idChannel);
+            } else {
+                Logger.rejectTask(completed.task.getID(), Phases.Second);
+            }
+        });
+
+        this.secondPhase.getCompleted().subscribe(completed => {
+            console.log('completed', completed);
+            Logger.onCompletedTask(
+                Phases.Second,
+                completed.idChannel,
+                completed.task.getID(),
+                completed.timeInChannel
+            )
+            Logger.successfullyCompletedTask(completed.task.getID(), Phases.Second);
         });
 
         this.source.activate();
