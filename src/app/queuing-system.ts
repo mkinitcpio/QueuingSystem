@@ -34,15 +34,14 @@ export class QueuingSystem {
 
     public start(): void {
         this.firstPhase.getCompleted().subscribe(completed => {
-            Logger.onCompletedTask(
-                Phases.First,
-                completed.idChannel,
-                completed.task.getID(),
-                completed.timeInChannel
-            )
             let request = this.secondPhase.setTask(completed.task);
-            console.log(request);
             if (request.isStartProcessing) {
+                Logger.onCompletedTask(
+                    Phases.First,
+                    completed.idChannel,
+                    completed.task.getID(),
+                    completed.timeInChannel
+                );
                 Logger.startProcessingTask(completed.task.getID(), Phases.Second, request.idChannel);
             } else {
                 Logger.rejectTask(completed.task.getID(), Phases.Second);
@@ -55,7 +54,7 @@ export class QueuingSystem {
                 completed.idChannel,
                 completed.task.getID(),
                 completed.timeInChannel
-            )
+            );
             Logger.successfullyCompletedTask(completed.task.getID(), Phases.Second);
         });
 

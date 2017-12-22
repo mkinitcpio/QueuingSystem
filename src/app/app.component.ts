@@ -22,13 +22,13 @@ export class AppComponent implements OnInit {
     let normalDistributionFunction = new NormalDistributionFunctionFactory().get(0.1);
     let exponentialDistributionFunction = new ExponentialDistributionFunctionFactory().get(0.1);
 
-    let source = new Source(1000, exponentialDistributionFunction);
+    let source = new Source(50, exponentialDistributionFunction);
 
     let options: Options = {
       firstPhase: {
         accumulatorCapacity: 3,
         channelCount: 6,
-        maxWaitingTime: 10,
+        maxWaitingTime: 10*10,
         distributionFunction: normalDistributionFunction
       },
       secondPhase: {
