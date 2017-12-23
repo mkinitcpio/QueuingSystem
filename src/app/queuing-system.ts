@@ -61,24 +61,18 @@ export class QueuingSystem {
                 completed.task.getID(),
                 completed.timeInChannel
             );
-            if (this.waitingTasks.length != 0) {
-                let waitingTask = this.waitingTasks.shift();
-                this.secondPhase.setTask(waitingTask.task);
-                Logger.unblockChannel(Phases.First, waitingTask.channelId);
-                this.firstPhase.block(waitingTask.channelId, false);
+
+            let request = this.secondPhase.setTask(completed.task);
+            if (request.isStartProcessing) {
+                Logger.startProcessingTask(completed.task.getID(), Phases.Second, request.idChannel);
             } else {
-                let request = this.secondPhase.setTask(completed.task);
-                if (request.isStartProcessing) {
-                    Logger.startProcessingTask(completed.task.getID(), Phases.Second, request.idChannel);
-                } else {
-                    Logger.rejectTask(completed.task.getID(), Phases.Second);
-                    this.firstPhase.block(completed.idChannel, true);
-                    this.waitingTasks.push({
-                        channelId: completed.idChannel,
-                        task: completed.task
-                    });
-                    Logger.blockChannel(Phases.First, completed.idChannel);
-                }
+                Logger.rejectTask(completed.task.getID(), Phases.Second);
+                this.firstPhase.block(completed.idChannel, true);
+                this.waitingTasks.push({
+                    channelId: completed.idChannel,
+                    task: completed.task
+                });
+                Logger.blockChannel(Phases.First, completed.idChannel);
             }
         });
 
@@ -90,6 +84,12 @@ export class QueuingSystem {
                 completed.timeInChannel
             );
             Logger.successfullyCompletedTask(completed.task.getID(), Phases.Second);
+            if (this.waitingTasks.length != 0) {
+                let waitingTask = this.waitingTasks.shift();
+                this.secondPhase.setTask(waitingTask.task);
+                Logger.unblockChannel(Phases.First, waitingTask.channelId);
+                this.firstPhase.block(waitingTask.channelId, false);
+            }
         });
 
         this.source.activate();
