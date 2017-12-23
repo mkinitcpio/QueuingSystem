@@ -1,6 +1,7 @@
 import { Subject } from 'rxjs/Subject';
 import { Completed, ChannelStatus } from './typings';
 import { Task } from './task';
+import { Observable } from 'rxjs';
 
 export class Channel {
     private id: number;
@@ -29,7 +30,7 @@ export class Channel {
             this.status = ChannelStatus.SERVICE;
             const that = this;
 
-            processingTime = this.channelDistributionFunction();
+            processingTime = this.channelDistributionFunction()*100;
             setTimeout(function () {
                 this.status = ChannelStatus.EMPTY;
 

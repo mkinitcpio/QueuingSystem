@@ -9,9 +9,13 @@ import { Logger } from "./logger";
 
 export class QueuingSystem {
 
-    private firstPhase: Phase;
-    private secondPhase: Phase;
+    private firstPhase: FirstPhase;
+    private secondPhase: SecondPhase;
     private onFinish$: Subject<void>;
+    private waitingTasks: Array<{
+        channelId: number,
+        task: Task
+    }> = [];
 
     constructor(
         private source: Source,
@@ -25,7 +29,6 @@ export class QueuingSystem {
             options.firstPhase.maxWaitingTime,
             options.firstPhase.distributionFunction,
         );
-
         this.secondPhase = new SecondPhase(
             options.secondPhase.channelCount,
             options.secondPhase.distributionFunction
@@ -33,7 +36,32 @@ export class QueuingSystem {
     }
 
     public start(): void {
+        this.source.taskEmitter.subscribe(task => {
+            Logger.newTaskAppeared(task.getID());
+            let request = this.firstPhase.setTask(task);
+            if (request.isStartProcessing) {
+                if (request.idChannel === -1) {
+                    Logger.addTaskToAccumulator(task.getID(), Phases.First);
+                } else {
+                    Logger.startProcessingTask(task.getID(), Phases.First, request.idChannel);
+                }
+            } else {
+                Logger.rejectTask(task.getID(), Phases.First);
+            }
+        });
+
+        this.source.onEmptySource.subscribe(() => {
+            this.onFinish$.next();
+        });
+
         this.firstPhase.getCompleted().subscribe(completed => {
+            Logger.onCompletedTask(
+                Phases.First,
+                completed.idChannel,
+                completed.task.getID(),
+                completed.timeInChannel
+            );
+
             let request = this.secondPhase.setTask(completed.task);
             if (request.isStartProcessing) {
                 Logger.onCompletedTask(
@@ -45,6 +73,12 @@ export class QueuingSystem {
                 Logger.startProcessingTask(completed.task.getID(), Phases.Second, request.idChannel);
             } else {
                 Logger.rejectTask(completed.task.getID(), Phases.Second);
+                this.firstPhase.block(completed.idChannel, true);
+                this.waitingTasks.push({
+                    channelId: completed.idChannel,
+                    task: completed.task
+                });
+                Logger.blockChannel(Phases.First, completed.idChannel);
             }
         });
 
@@ -56,20 +90,12 @@ export class QueuingSystem {
                 completed.timeInChannel
             );
             Logger.successfullyCompletedTask(completed.task.getID(), Phases.Second);
-        });
-
-        this.source.taskEmitter.subscribe(task => {
-            Logger.newTaskAppeared(task.getID());
-            let request = this.firstPhase.setTask(task);
-            if (request.isStartProcessing) {
-                Logger.startProcessingTask(task.getID(), Phases.First, request.idChannel);
-            } else {
-                Logger.rejectTask(task.getID(), Phases.First);
+            if (this.waitingTasks.length != 0) {
+                let waitingTask = this.waitingTasks.shift();
+                this.secondPhase.setTask(waitingTask.task);
+                Logger.unblockChannel(Phases.First, waitingTask.channelId);
+                this.firstPhase.block(waitingTask.channelId, false);
             }
-        });
-
-        this.source.onEmptySource.subscribe(() => {
-            this.onFinish$.next();
         });
 
         this.source.activate();

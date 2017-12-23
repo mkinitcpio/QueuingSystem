@@ -1,11 +1,13 @@
 import { Task } from './task';
 import { AccumulationTask } from './typings';
 import { take } from 'rxjs/operators/take';
+import { Subject } from 'rxjs/Subject';
 
 export class Accumulator {
     private readonly capacity: number;
     private taskList: Array<AccumulationTask> = [];
     private readonly maxLifeTime: number;
+    private onDead$: Subject<Task> = new Subject();
 
     constructor(capacity: number, taskInAccumulatorMaxTime: number) {
         this.capacity = capacity;
@@ -23,6 +25,7 @@ export class Accumulator {
         }
         setTimeout(() => {
             this.taskList = this.taskList.filter((value) => task !== value.task);
+            this.onDead$.next(task);
         }, this.maxLifeTime);
     }
 
@@ -38,5 +41,9 @@ export class Accumulator {
 
     public count() {
         return this.taskList.length;
+    }
+
+    public onDead(): Subject<Task> {
+        return this.onDead$;
     }
 }

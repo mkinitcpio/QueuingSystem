@@ -1,6 +1,6 @@
-import { Task } from "./task";
-import { Observable, Subject, BehaviorSubject } from "rxjs";
-import { IdGenerator } from "./id-generator";
+import { Task } from './task';
+import { Observable, Subject, BehaviorSubject } from 'rxjs';
+import { IdGenerator } from './id-generator';
 
 export class Source {
 
@@ -33,13 +33,13 @@ export class Source {
 
     public activate(): void {
         this.intervalsEmitter$.subscribe((interval: number) => {
+            interval = interval * 100;
             let timerSubscription = Observable.timer(interval).subscribe(() => {
                 let task = new Task(<any>IdGenerator.generate());
-                
                 if (!this.isIntervalsEmpty) {
                     this.taskEmitter$.next(task);
                     this.intervalsEmitter$.next(this.intervals.shift());
-                }else{
+                } else {
                     this.taskEmitter$.next(task);
                     this.onEmptySource$.next();
                 }
@@ -48,7 +48,7 @@ export class Source {
         });
     }
 
-    private get isIntervalsEmpty(): boolean{
+    private get isIntervalsEmpty(): boolean {
         return this.intervals.length === 0;
     }
 }
