@@ -121,4 +121,14 @@ export class FirstPhase implements Phase {
         avgTime = avgTime / 2;
         return avgTime;
     }
+
+    public get getCountTaskInPhase(): number {
+        let countTask = 0;
+        for (let i = 0; i < this.channels.length; i++) {
+            if (this.channels[i].getStatus() !== ChannelStatus.EMPTY) {
+                countTask++;
+            }
+        }
+        return countTask;
+    }
 }

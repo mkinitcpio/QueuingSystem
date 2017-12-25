@@ -67,4 +67,14 @@ export class SecondPhase implements Phase {
         let avgTime = this.timeInPhase / this.countCompletedTask;
         return avgTime;
     }
+
+    public get getCountTaskInPhase(): number {
+        let countTask = 0;
+        for (let i = 0; i < this.channels.length; i++) {
+            if (this.channels[i].getStatus() !== ChannelStatus.EMPTY) {
+                countTask++;
+            }
+        }
+        return countTask;
+    }
 }
