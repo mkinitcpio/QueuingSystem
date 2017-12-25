@@ -23,8 +23,10 @@ export class Accumulator {
         if (this.isAccumulatorAvailable()) {
             this.taskList.push(accumulationTask);
             let timer = Observable.timer(this.maxLifeTime).subscribe(() => {
-                this.taskList = this.taskList.filter((value) => task.getID() !== value.task.getID());
-                this.onDead$.next(task);
+                if(this.taskList.find(value => value.task.getID() == task.getID())){
+                    this.taskList = this.taskList.filter((value) => task.getID() !== value.task.getID());
+                    this.onDead$.next(task);
+                }
                 timer.unsubscribe();
             });
         }
