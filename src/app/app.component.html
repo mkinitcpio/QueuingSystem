@@ -7,11 +7,16 @@
     <app-rejected-tasks [rejectedTasks]='model.rejectedTasks'></app-rejected-tasks>
 </div>
 
+<div *ngIf='isReady && isShowStatistics' class='dialog'>
+    <div class='close-button' (click)='closeDialog()'>
+        X
+    </div>
+    <app-results  [results]='model.results'>
 
-<app-results *ngIf='isReady' [results]='model.results'>
+    </app-results>
+    <app-chart [results]='results' [i]='i'></app-chart>
+</div>
 
-</app-results>
 
-<app-chart *ngIf='isShowChart' [results]='results || []' [i]='i'></app-chart>
-<button (click)='showChart()' [disabled]='!isReady'>Показать график</button>
+<button (click)='showStatistics()' [disabled]='!isReady'>Показать статистику</button>
 <button (click)='start()'>Запустить</button>

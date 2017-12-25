@@ -6,6 +6,9 @@
     display: flex;
     width: 250px;
     flex-wrap: wrap;
+    height: 500px;
+    overflow-y: auto;
+    align-content: start;
 }
 
 .task{

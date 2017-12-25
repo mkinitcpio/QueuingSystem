@@ -1,3 +1,40 @@
 .queuing-system{
     display: flex;
 }
+
+.dialog{
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background-color: aquamarine;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.close-button{
+    cursor: pointer;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    border-radius: 50%;
+    border: 3px solid salmon;
+    height: 50px;
+    width: 50px;
+    font-size: 25px;
+    line-height: 50px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    text-align: center;
+    font-weight: 700;
+}
+
+.close-button:hover{
+    color: salmon;
+    border: 3px solid rgb(255, 99, 82);
+}
+
+app-source-tasks{
+    margin-right: 32px;
+}
