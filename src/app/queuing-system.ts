@@ -13,6 +13,8 @@ export class QueuingSystem {
     private secondPhase: SecondPhase;
     private onFinish$: Subject<void>;
     private model: Model;
+    public onEnd: Subject<number> = new Subject();
+
     private waitingTasks: Array<{
         channelId: number,
         task: Task
@@ -65,14 +67,12 @@ export class QueuingSystem {
         }
     }
 
-
     public start(): void {
         let counter = 0;
         let countTask = 0;
         let subscription: Subscription;
         this.firstPhase.taskOverdueInAccumulator.subscribe(() => {
             let task = this.model.queuingSystem.accumulator.tasks.shift();
-            console.log('превышено время ожидания', task);
             if (task) {
                 this.model.rejectedTasks.push({
                     id: task.id
@@ -81,12 +81,9 @@ export class QueuingSystem {
         });
 
         this.firstPhase.taskTakeFromAccumulator.subscribe((request: any) => {
-            console.log('Взят из аккумулятора', request);
-
             this.model.queuingSystem.firstPhase.channels[request.channelId].id = request.task.getID();
             this.model.queuingSystem.firstPhase.channels[request.channelId].state = ChannelStatus.SERVICE;
             this.model.queuingSystem.accumulator.tasks = this.model.queuingSystem.accumulator.tasks.filter(task => task.id !== request.task.getID())
-
         });
 
         this.source.taskEmitter.subscribe(task => {
@@ -184,11 +181,13 @@ export class QueuingSystem {
                 subscription.unsubscribe();
                 this.model.results.completedTasks = this.model.completedTasks.length;
                 this.model.results.rejectedTasks = this.model.rejectedTasks.length;
-                this.model.results.absoluteThroughputOfSystem =  ((this.firstPhase.avgTimeInPhase + this.secondPhase.avgTimeInPhase ) / 20).toFixed(2);
+                this.model.results.absoluteThroughputOfSystem = ((this.firstPhase.avgTimeInPhase + this.secondPhase.avgTimeInPhase) / 20).toFixed(2);
                 this.model.results.averageTasksInSystem = (countTask / counter).toFixed(2);
-                this.model.results.a = (this.model.results.rejectedTasks / this.options.sourceTasksCount).toFixed(2);
+                this.model.results.a = ((this.model.results.rejectedTasks / this.options.sourceTasksCount) * 100).toFixed(2);
                 this.model.results.averageTimeInAccumulator = this.firstPhase.getAvgTimeInAccumulation.toFixed(2);
                 this.model.results.maxTimeInAccumulator = this.firstPhase.getMaxTimeInAccumulation;
+                console.log(this.model.results.rejectedTasks );
+                this.onEnd.next(this.model.results.a);
             }
         });
 

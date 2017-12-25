@@ -12,6 +12,7 @@ import { CompletedTasksComponent } from './completed-tasks/completed-tasks.compo
 import { AccumulatorComponent } from './accumulator/accumulator.component';
 import { PhaseComponent } from './phase/phase.component';
 import { ResultsComponent } from './results/results.component';
+import { ChartComponent } from './chart/chart.component';
 
 
 @NgModule({
@@ -23,7 +24,8 @@ import { ResultsComponent } from './results/results.component';
     CompletedTasksComponent,
     AccumulatorComponent,
     PhaseComponent,
-    ResultsComponent
+    ResultsComponent,
+    ChartComponent
   ],
   imports: [
     BrowserModule,

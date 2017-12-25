@@ -9,6 +9,7 @@ import { Source } from './source';
 import { ExponentialDistributionFunctionFactory } from './factories/exponential-distribution-function-factory';
 import { Logger } from './logger';
 import { NormalDistributionFunctionFactory } from './factories/normal-distribution-function-factory';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -25,34 +26,59 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {
 
-    let normalDistributionFunction = new NormalDistributionFunctionFactory().get(0.01);
-    let exponentialDistributionFunction = new ExponentialDistributionFunctionFactory().get(0.02);
-    let exponentialDistributionFunction1 = new ExponentialDistributionFunctionFactory().get(1);
-    let source = new Source(100, exponentialDistributionFunction1);
-    let options: Options = {
-      firstPhase: {
-        accumulatorCapacity: 9,
-        channelCount: 5,
-        maxWaitingTime: 1000,
-        distributionFunction: normalDistributionFunction
-      },
-      secondPhase: {
-        channelCount: 6,
-        distributionFunction: exponentialDistributionFunction
-      },
-      sourceTasksCount: 100
-    };
+    // let normalDistributionFunction = new NormalDistributionFunctionFactory().get(0.01);
+    // let exponentialDistributionFunction = new ExponentialDistributionFunctionFactory().get(0.02);
+    // let exponentialDistributionFunction1 = new ExponentialDistributionFunctionFactory().get(1);
+    // let source = new Source(100, exponentialDistributionFunction1);
+    // let options: Options = {
+    //   firstPhase: {
+    //     accumulatorCapacity: 9,
+    //     channelCount: 5,
+    //     maxWaitingTime: 1000,
+    //     distributionFunction: normalDistributionFunction
+    //   },
+    //   secondPhase: {
+    //     channelCount: 6,
+    //     distributionFunction: exponentialDistributionFunction
+    //   },
+    //   sourceTasksCount: 100
+    // };
 
-    let system = new QueuingSystem(
-      source,
-      options
-    );
+    let sources = [];
+    let s = [];
+    for (let i = 0.01; i <= 0.01; i += 1) {
+      let normalDistributionFunction = new NormalDistributionFunctionFactory().get(i);
+      let exponentialDistributionFunction = new ExponentialDistributionFunctionFactory().get(i);
+      let exponentialDistributionFunction1 = new ExponentialDistributionFunctionFactory().get(0.05);
+      let source = new Source(100, exponentialDistributionFunction1);
+      let options: Options = {
+        firstPhase: {
+          accumulatorCapacity: 9,
+          channelCount: 5,
+          maxWaitingTime: 1000,
+          distributionFunction: normalDistributionFunction
+        },
+        secondPhase: {
+          channelCount: 6,
+          distributionFunction: exponentialDistributionFunction
+        },
+        sourceTasksCount: 100
+      };
+      let system = new QueuingSystem(
+        source,
+        options
+      );
+      sources.push(system.onEnd);
+      s.push(system);
+    }
 
-    system.onFinish.subscribe(() => {
-      Logger.write('Source пустой.');
+    Observable.zip(...sources).subscribe((results) => {
+      console.log(results);
     });
 
-    this.model = system.getModel();
-    system.start();
+    for (const so of s) {
+      so.start();
+      console.log('start');
+    }
   }
 }

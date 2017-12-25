@@ -23,7 +23,7 @@ export class Logger {
         taskId: string,
         time: number
     ): void {
-        //console.log(`Заявка ${taskId} обработана фазой ${phaseId} каналом ${channelId} за время ${time}ms.`);
+        // console.log(`Заявка ${taskId} обработана фазой ${phaseId} каналом ${channelId} за время ${time}ms.`);
     }
 
     static addTaskToAccumulator(
@@ -64,6 +64,6 @@ export class Logger {
         taskId: string,
         phaseId: number
     ): void {
-        //console.log(`Заявка ${taskId} успешно обработана системой.`);
+        console.log(`Заявка ${taskId} успешно обработана системой.`);
     }
 }
