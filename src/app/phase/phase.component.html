@@ -1,0 +1,15 @@
+<div class=phase-component>
+  <ng-content></ng-content>
+  <div class='channels'>
+    <div *ngFor='let channel of channels'>
+      <div [ngClass]="{
+          'channel': 'true',
+          'empty': channel.state === ChannelStatus.EMPTY,
+          'block': channel.state === ChannelStatus.BLOCK,
+          'service': channel.state === ChannelStatus.SERVICE
+      }">
+      {{channel.id}}
+      </div>
+    </div>
+  </div>
+</div>

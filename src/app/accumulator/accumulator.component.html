@@ -1,0 +1,13 @@
+<div class='accumulator-container'>
+  <div *ngFor='let task of accumulatorArray; let i = index'>
+    <div [ngClass]="{ 
+      'task': true,
+      'empty': !tasks[i],
+      'busy': tasks[i]
+    }">
+      <span *ngIf='tasks[i]'>
+        {{tasks[i].id}}
+      </span>
+    </div>
+  </div>
+</div>

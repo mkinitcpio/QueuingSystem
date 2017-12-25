@@ -1,0 +1,30 @@
+.phase-component{
+    display: flex;
+    padding: 16px;
+    border: 1px black solid;
+    margin: 4px;
+}
+
+.channels{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.channel{
+    border-radius: 50%;
+    height: 30px;
+    width: 30px;
+}
+
+.block{
+    background-color: red;
+}
+
+.empty{
+    background-color: bisque;
+}
+
+.service{
+    background-color: yellow;
+}

@@ -1,0 +1,21 @@
+.accumulator-container{
+    height: 30px;
+    width: 100%;
+    display: flex;
+}
+
+.task{
+    box-sizing: border-box;
+    height: 30px;
+    width: 30px;
+    background-color: aquamarine;
+    border-right: 1px solid white;
+}
+
+.empty{
+    background-color: bisque;
+}
+
+.busy{
+    background-color: yellow;
+}

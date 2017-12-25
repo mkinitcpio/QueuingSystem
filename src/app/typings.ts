@@ -39,9 +39,33 @@ export interface Options {
         channelCount: number,
         distributionFunction: Function
     };
+    sourceTasksCount: number
 }
 
 export enum Phases {
     First = 1,
     Second = 2
+}
+
+export interface Model {
+    queuingSystem: {
+        accumulator: {
+            accumulatorCapacity: number,
+            tasks: Array<any>
+        },
+        firstPhase: {
+            channels: Array<ChannelModel>
+        },
+        secondPhase: {
+            channels: Array<ChannelModel>
+        }
+    },
+    rejectedTasks: Array<any>,
+    completedTasks: Array<any>,
+    sourceTasks: Array<any>
+}
+
+interface ChannelModel {
+    id: number,
+    state: ChannelStatus
 }

@@ -7,7 +7,7 @@ export class Channel {
     private id: number;
     private status: ChannelStatus;
     private channelDistributionFunction: any;
-
+    private task: Task;
     private onEdit$: Subject<Completed> = new Subject();
 
     constructor(id: number, distributionFunction: any) {
@@ -18,30 +18,29 @@ export class Channel {
 
     public getID() { return this.id; }
     public getStatus() { return this.status; }
-
+    
     public setStatus(newStatus: ChannelStatus) {
         this.status = newStatus;
     }
 
     public takeTask(task: Task) {
         if (this.status === ChannelStatus.EMPTY) {
-
+            this.task = task;
             let processingTime = 0;
             this.status = ChannelStatus.SERVICE;
-            const that = this;
 
-            processingTime = this.channelDistributionFunction()*100;
-            setTimeout(function () {
+            processingTime = this.channelDistributionFunction() * 10;
+            let timer = Observable.timer(processingTime).subscribe(()=>{
                 this.status = ChannelStatus.EMPTY;
-
+                this.task = null;
                 const completed: Completed = {
                     task: task,
-                    idChannel: that.id,
+                    idChannel: this.id,
                     timeInChannel: processingTime
                 };
-                that.onEdit$.next(completed);
-            }
-                , processingTime);
+                this.onEdit$.next(completed);
+                timer.unsubscribe();
+            });
             return true;
         }
         return false;

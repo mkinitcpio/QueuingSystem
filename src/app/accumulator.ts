@@ -2,6 +2,7 @@ import { Task } from './task';
 import { AccumulationTask } from './typings';
 import { take } from 'rxjs/operators/take';
 import { Subject } from 'rxjs/Subject';
+import { Observable } from 'rxjs';
 
 export class Accumulator {
     private readonly capacity: number;
@@ -19,14 +20,14 @@ export class Accumulator {
             task: task,
             timeInAccumulator: new Date().getMilliseconds(),
         };
-
         if (this.isAccumulatorAvailable()) {
             this.taskList.push(accumulationTask);
+            let timer = Observable.timer(this.maxLifeTime).subscribe(() => {
+                this.taskList = this.taskList.filter((value) => task.getID() !== value.task.getID());
+                this.onDead$.next(task);
+                timer.unsubscribe();
+            });
         }
-        setTimeout(() => {
-            this.taskList = this.taskList.filter((value) => task !== value.task);
-            this.onDead$.next(task);
-        }, this.maxLifeTime);
     }
 
     public getTask(): AccumulationTask {
@@ -43,7 +44,7 @@ export class Accumulator {
         return this.taskList.length;
     }
 
-    public onDead(): Subject<Task> {
+    public get onDead(): Subject<Task> {
         return this.onDead$;
     }
 }

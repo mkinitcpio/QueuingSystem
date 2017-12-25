@@ -1,0 +1,10 @@
+.title{
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.queuing-system{
+    display: flex;
+    width: 100%;
+    border: 1px solid black;
+    padding: 16px;
+}

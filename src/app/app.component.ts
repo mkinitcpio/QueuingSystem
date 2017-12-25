@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { OnInit } from '@angular/core';
 import { Channel } from './channel';
 import { SecondPhase } from './second-phase';
-import { Phase, Completed, Options } from './typings';
+import { Phase, Completed, Options, Model } from './typings';
 import { Task } from './task';
 import { QueuingSystem } from './queuing-system';
 import { Source } from './source';
@@ -17,24 +17,30 @@ import { NormalDistributionFunctionFactory } from './factories/normal-distributi
 })
 export class AppComponent implements OnInit {
 
+  public tasks = [];
+  public completedTasks = [];
+  public rejectedTasks = [];
+
+  public model: Model;
+
   ngOnInit(): void {
 
-    let normalDistributionFunction = new NormalDistributionFunctionFactory().get(0.1);
-    let exponentialDistributionFunction = new ExponentialDistributionFunctionFactory().get(0.2);
-    let exponentialDistributionFunction1 = new ExponentialDistributionFunctionFactory().get(1);
-    let source = new Source(50, exponentialDistributionFunction1);
-
+    let normalDistributionFunction = new NormalDistributionFunctionFactory().get(0.01);
+    let exponentialDistributionFunction = new ExponentialDistributionFunctionFactory().get(0.02);
+    let exponentialDistributionFunction1 = new ExponentialDistributionFunctionFactory().get(10);
+    let source = new Source(100, exponentialDistributionFunction1);
     let options: Options = {
       firstPhase: {
-        accumulatorCapacity: 10,
+        accumulatorCapacity: 9,
         channelCount: 5,
-        maxWaitingTime: 300,
+        maxWaitingTime: 2000,
         distributionFunction: normalDistributionFunction
       },
       secondPhase: {
-        channelCount: 3,
+        channelCount: 6,
         distributionFunction: exponentialDistributionFunction
-      }
+      },
+      sourceTasksCount: 100
     };
 
     let system = new QueuingSystem(
@@ -44,7 +50,9 @@ export class AppComponent implements OnInit {
 
     system.onFinish.subscribe(() => {
       Logger.write('Source пустой.');
-    })
+    });
+
+    this.model = system.getModel();
     system.start();
   }
 }

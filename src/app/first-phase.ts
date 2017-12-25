@@ -3,6 +3,7 @@ import { Task } from './task';
 import { Subject } from 'rxjs';
 import { Channel } from './channel';
 import { Accumulator } from './accumulator';
+import { Observable } from 'rxjs/Observable';
 
 export class FirstPhase implements Phase {
     private channelsCount: number;
@@ -12,6 +13,8 @@ export class FirstPhase implements Phase {
     private channels: Channel[] = [];
     private accumulator: Accumulator;
     private completed$: Subject<Completed> = new Subject();
+    private onTaskOverdueInAccumulator$: Subject<void> = new Subject();
+    private onTaskTakeFromAccumulator$: Subject<any> = new Subject();
 
     constructor(channelsCount: number, accumulatorCapacity: number,
         taskInAccumulatorMaxTime: number, distributionFunction: any) {
@@ -61,11 +64,27 @@ export class FirstPhase implements Phase {
                     this.channels[completed.idChannel].setStatus(ChannelStatus.EMPTY);
 
                     if (this.accumulator.count() > 0) {
-                        this.check(this.accumulator.getTask().task);
+                        let task = this.accumulator.getTask().task;
+                        let request = this.check(task);
+                        this.onTaskTakeFromAccumulator$.next({
+                            task: task,
+                            channelId: request.idChannel
+                        });
                     }
                 }
             });
         }
+        this.accumulator.onDead.subscribe(()=>{
+            this.onTaskOverdueInAccumulator$.next();
+        });
+    }
+
+    public get taskOverdueInAccumulator(): Observable<void>{
+        return this.onTaskOverdueInAccumulator$;
+    }
+
+    public get taskTakeFromAccumulator(): Observable<void>{
+        return this.onTaskTakeFromAccumulator$;
     }
 
     public setTask(task: Task): Request {

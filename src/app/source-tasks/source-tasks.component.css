@@ -1,0 +1,17 @@
+.title{
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.source-container{
+    width: 250px;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.task{
+    box-sizing: border-box;
+    height: 30px;
+    width: 30px;
+    background-color: cornflowerblue;
+    border: 1px solid white;
+}

@@ -6,7 +6,7 @@ export class Source {
 
     private intervals: Array<number> = [];
     private taskEmitter$: Subject<Task>;
-    private intervalsEmitter$: BehaviorSubject<number>;
+    private intervalsEmitter$: BehaviorSubject<any>;
     private onEmptySource$: Subject<void>;
 
     constructor(
@@ -15,7 +15,10 @@ export class Source {
     ) {
         this.taskEmitter$ = new Subject();
         this.intervals = this.generateIntervals(this.tasksCounter);
-        this.intervalsEmitter$ = new BehaviorSubject(this.intervals.shift());
+        this.intervalsEmitter$ = new BehaviorSubject({
+            id: 0,
+            interval: this.intervals.shift()
+        });
         this.onEmptySource$ = new Subject();
     }
 
@@ -32,13 +35,16 @@ export class Source {
     }
 
     public activate(): void {
-        this.intervalsEmitter$.subscribe((interval: number) => {
-            interval = interval * 100;
+        this.intervalsEmitter$.subscribe((obj: any) => {
+            let interval = obj.interval * 100;
             let timerSubscription = Observable.timer(interval).subscribe(() => {
-                let task = new Task(<any>IdGenerator.generate());
+                let task = new Task(obj.id);
                 if (!this.isIntervalsEmpty) {
                     this.taskEmitter$.next(task);
-                    this.intervalsEmitter$.next(this.intervals.shift());
+                    this.intervalsEmitter$.next({
+                        id: ++obj.id,
+                        interval: this.intervals.shift()
+                    });
                 } else {
                     this.taskEmitter$.next(task);
                     this.onEmptySource$.next();

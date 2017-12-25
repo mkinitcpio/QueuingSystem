@@ -1,0 +1,8 @@
+<h3 class='title'>Отклоненные заявки: {{rejectedTasks.length}}</h3>
+<div class="rejected-tasks-container">
+  <div *ngFor='let task of rejectedTasks'>
+    <div class=task>
+      {{task.id}}
+    </div>
+  </div>
+</div>
