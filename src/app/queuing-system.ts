@@ -186,7 +186,6 @@ export class QueuingSystem {
                 this.model.results.a = ((this.model.results.rejectedTasks / this.options.sourceTasksCount) * 100).toFixed(2);
                 this.model.results.averageTimeInAccumulator = this.firstPhase.getAvgTimeInAccumulation.toFixed(2);
                 this.model.results.maxTimeInAccumulator = this.firstPhase.getMaxTimeInAccumulation;
-                console.log(this.model.results.rejectedTasks );
                 this.onEnd.next(this.model.results.a);
             }
         });

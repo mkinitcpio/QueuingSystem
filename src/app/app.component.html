@@ -1,12 +1,17 @@
-<!-- <div class='queuing-system'>
-    <app-source-tasks [tasks]='model.sourceTasks'></app-source-tasks>
-    <app-queuing-system [model]='model'></app-queuing-system>
-    <app-completed-tasks [completedTasks]='model.completedTasks'></app-completed-tasks>
+<div *ngIf='isStarted'>
+    <div class='queuing-system'>
+        <app-source-tasks [tasks]='model.sourceTasks'></app-source-tasks>
+        <app-queuing-system [model]='model'></app-queuing-system>
+        <app-completed-tasks [completedTasks]='model.completedTasks'></app-completed-tasks>
+    </div>
+    <app-rejected-tasks [rejectedTasks]='model.rejectedTasks'></app-rejected-tasks>
 </div>
-<app-rejected-tasks [rejectedTasks]='model.rejectedTasks'></app-rejected-tasks> -->
 
-<!-- <app-results >
 
-</app-results> -->
+<app-results *ngIf='isReady' [results]='model.results'>
 
-<app-chart [results]='results' [i]='i'></app-chart>
+</app-results>
+
+<app-chart *ngIf='isShowChart' [results]='results || []' [i]='i'></app-chart>
+<button (click)='showChart()' [disabled]='!isReady'>Показать график</button>
+<button (click)='start()'>Запустить</button>

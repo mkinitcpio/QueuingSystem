@@ -6,7 +6,7 @@ export class Logger {
     static newTaskAppeared(
         taskId: string
     ): void {
-        //console.log(`Заявка ${taskId} появилась в системе.`);
+        // console.log(`Заявка ${taskId} появилась в системе.`);
     }
 
     static startProcessingTask(
@@ -14,7 +14,7 @@ export class Logger {
         phaseId: number,
         channelId: number
     ): void {
-        //console.log(`Заявка ${taskId} начала обрабатываться в фазе ${phaseId} каналом ${channelId}.`);
+        // console.log(`Заявка ${taskId} начала обрабатываться в фазе ${phaseId} каналом ${channelId}.`);
     }
 
     static onCompletedTask(
@@ -64,6 +64,6 @@ export class Logger {
         taskId: string,
         phaseId: number
     ): void {
-        console.log(`Заявка ${taskId} успешно обработана системой.`);
+        // console.log(`Заявка ${taskId} успешно обработана системой.`);
     }
 }

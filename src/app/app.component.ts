@@ -18,12 +18,17 @@ import { Observable } from 'rxjs';
 })
 export class AppComponent implements OnInit {
 
+
   public tasks = [];
   public completedTasks = [];
   public rejectedTasks = [];
   public results = [];
   public model: Model;
   public i = [];
+
+  public isReady = false;
+  public isStarted = false;
+  public isShowChart = false;
   ngOnInit(): void {
 
     // let normalDistributionFunction = new NormalDistributionFunctionFactory().get(0.01);
@@ -43,6 +48,47 @@ export class AppComponent implements OnInit {
     //   },
     //   sourceTasksCount: 100
     // };
+    // let sources = [];
+    // let s = [];
+    
+  }
+
+  public showChart(): void {
+    this.isShowChart = true;
+  }
+
+  public start(): void {
+    this.isReady = false;
+    this.isStarted = true;
+    let normalDistributionFunction = new NormalDistributionFunctionFactory().get(0.01);
+    let exponentialDistributionFunction = new ExponentialDistributionFunctionFactory().get(0.02);
+    let exponentialDistributionFunction1 = new ExponentialDistributionFunctionFactory().get(1);
+    let source = new Source(100, exponentialDistributionFunction1);
+    let options: Options = {
+      firstPhase: {
+        accumulatorCapacity: 9,
+        channelCount: 5,
+        maxWaitingTime: 1000,
+        distributionFunction: normalDistributionFunction
+      },
+      secondPhase: {
+        channelCount: 6,
+        distributionFunction: exponentialDistributionFunction
+      },
+      sourceTasksCount: 100
+    };
+    let system = new QueuingSystem(
+      source,
+      options
+    );
+    this.model = system.getModel();
+    system.start();
+    system.onEnd.subscribe(()=>{
+      this.generateChartsData();
+    });
+  }
+
+  generateChartsData(): any {
     let sources = [];
     let s = [];
     for (let i = 0.0001; i <= 0.02; i += 0.003) {
@@ -74,6 +120,7 @@ export class AppComponent implements OnInit {
 
     Observable.zip(...sources).subscribe((results) => {
       this.results = results.sort((a: number, b: number) => b - a);
+      this.isReady = true;
     });
 
     for (const so of s) {
