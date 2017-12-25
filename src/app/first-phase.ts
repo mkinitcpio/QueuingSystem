@@ -131,4 +131,11 @@ export class FirstPhase implements Phase {
         }
         return countTask;
     }
-}
+
+    public get getAvgTimeInAccumulation(): number {
+        return this.accumulator.avgTimeInAccumulation;
+    }
+
+    public get getMaxTimeInAccumulation(): number {
+        return this.accumulator.getMaxTimeInAccumulation;
+    }
