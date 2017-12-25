@@ -16,6 +16,9 @@ export class FirstPhase implements Phase {
     private onTaskOverdueInAccumulator$: Subject<void> = new Subject();
     private onTaskTakeFromAccumulator$: Subject<any> = new Subject();
 
+    private timeInPhase = 0;
+    private countCompletedTask = 0;
+
     constructor(channelsCount: number, accumulatorCapacity: number,
         taskInAccumulatorMaxTime: number, distributionFunction: any) {
         this.createChannels(channelsCount, distributionFunction);
@@ -59,6 +62,8 @@ export class FirstPhase implements Phase {
     private onChange(): void {
         for (let i = 0; i < this.channels.length; i++) {
             this.channels[i].onEdit().subscribe((completed: Completed) => {
+                this.timeInPhase += completed.timeInChannel;
+                this.countCompletedTask++;
                 this.completed$.next(completed);
                 if (this.channels[completed.idChannel].getStatus() !== ChannelStatus.BLOCK) {
                     this.channels[completed.idChannel].setStatus(ChannelStatus.EMPTY);
@@ -70,20 +75,21 @@ export class FirstPhase implements Phase {
                             task: task,
                             channelId: request.idChannel
                         });
+
                     }
                 }
             });
         }
-        this.accumulator.onDead.subscribe(()=>{
+        this.accumulator.onDead.subscribe(() => {
             this.onTaskOverdueInAccumulator$.next();
         });
     }
 
-    public get taskOverdueInAccumulator(): Observable<void>{
+    public get taskOverdueInAccumulator(): Observable<void> {
         return this.onTaskOverdueInAccumulator$;
     }
 
-    public get taskTakeFromAccumulator(): Observable<void>{
+    public get taskTakeFromAccumulator(): Observable<void> {
         return this.onTaskTakeFromAccumulator$;
     }
 
@@ -106,5 +112,13 @@ export class FirstPhase implements Phase {
         } else {
             this.channels[id].setStatus(ChannelStatus.EMPTY);
         }
+    }
+
+
+    public get avgTimeInPhase(): number {
+        let avgInPhase = this.timeInPhase / this.countCompletedTask;
+        let avgTime = avgInPhase + this.accumulator.avgTimeInAccumulation;
+        avgTime = avgTime / 2;
+        return avgTime;
     }
 }
