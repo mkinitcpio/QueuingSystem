@@ -9,6 +9,9 @@ export class Accumulator {
     private taskList: Array<AccumulationTask> = [];
     private readonly maxLifeTime: number;
     private onDead$: Subject<Task> = new Subject();
+    private timeInAccumulation = 0;
+    private countAliveTask = 0;
+    private maxTimeInAccumulation = -1;
 
     constructor(capacity: number, taskInAccumulatorMaxTime: number) {
         this.capacity = capacity;
@@ -23,7 +26,7 @@ export class Accumulator {
         if (this.isAccumulatorAvailable()) {
             this.taskList.push(accumulationTask);
             let timer = Observable.timer(this.maxLifeTime).subscribe(() => {
-                if(this.taskList.find(value => value.task.getID() == task.getID())){
+                if (this.taskList.find(value => value.task.getID() == task.getID())) {
                     this.taskList = this.taskList.filter((value) => task.getID() !== value.task.getID());
                     this.onDead$.next(task);
                 }
@@ -35,6 +38,11 @@ export class Accumulator {
     public getTask(): AccumulationTask {
         const newTime = new Date().getMilliseconds();
         this.taskList[0].timeInAccumulator = (this.taskList[0].timeInAccumulator - newTime);
+        this.timeInAccumulation += this.taskList[0].timeInAccumulator;
+        this.countAliveTask++;
+        if (this.taskList[0].timeInAccumulator > this.maxTimeInAccumulation) {
+            this.maxTimeInAccumulation = this.taskList[0].timeInAccumulator;
+        }
         return this.taskList.shift();
     }
 
@@ -48,5 +56,13 @@ export class Accumulator {
 
     public get onDead(): Subject<Task> {
         return this.onDead$;
+    }
+
+    public get avgTimeInAccumulation() {
+        return this.timeInAccumulation / this.countAliveTask;
+    }
+
+    public get getMaxTimeInAccumulation(): number {
+        return this.maxTimeInAccumulation;
     }
 }
