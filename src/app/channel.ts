@@ -29,7 +29,7 @@ export class Channel {
             let processingTime = 0;
             this.status = ChannelStatus.SERVICE;
 
-            processingTime = this.channelDistributionFunction() * 10;
+            processingTime = this.channelDistributionFunction();
             let timer = Observable.timer(processingTime).subscribe(()=>{
                 this.status = ChannelStatus.EMPTY;
                 this.task = null;

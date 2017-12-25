@@ -46,10 +46,10 @@ export class AppComponent implements OnInit {
 
     let sources = [];
     let s = [];
-    for (let i = 0.01; i <= 0.01; i += 1) {
+    for (let i = 0.001; i <= 0.02; i += 0.003) {
       let normalDistributionFunction = new NormalDistributionFunctionFactory().get(i);
       let exponentialDistributionFunction = new ExponentialDistributionFunctionFactory().get(i);
-      let exponentialDistributionFunction1 = new ExponentialDistributionFunctionFactory().get(0.05);
+      let exponentialDistributionFunction1 = new ExponentialDistributionFunctionFactory().get(0.1);
       let source = new Source(100, exponentialDistributionFunction1);
       let options: Options = {
         firstPhase: {
