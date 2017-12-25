@@ -38,7 +38,7 @@ export class Accumulator {
     public getTask(): AccumulationTask {
         const newTime = new Date().getMilliseconds();
         this.taskList[0].timeInAccumulator = (this.taskList[0].timeInAccumulator - newTime);
-        this.timeInAccumulation += this.taskList[0].timeInAccumulator;
+        this.timeInAccumulation += Math.abs(this.taskList[0].timeInAccumulator);
         this.countAliveTask++;
         if (this.taskList[0].timeInAccumulator > this.maxTimeInAccumulation) {
             this.maxTimeInAccumulation = this.taskList[0].timeInAccumulator;
