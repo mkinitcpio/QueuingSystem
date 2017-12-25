@@ -1,6 +1,8 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 
+import { ChartsModule } from 'ng2-charts';
+
 
 import { AppComponent } from './app.component';
 import { SourceTasksComponent } from './source-tasks/source-tasks.component';
@@ -9,6 +11,7 @@ import { RejectedTasksComponent } from './rejected-tasks/rejected-tasks.componen
 import { CompletedTasksComponent } from './completed-tasks/completed-tasks.component';
 import { AccumulatorComponent } from './accumulator/accumulator.component';
 import { PhaseComponent } from './phase/phase.component';
+import { ResultsComponent } from './results/results.component';
 
 
 @NgModule({
@@ -19,10 +22,12 @@ import { PhaseComponent } from './phase/phase.component';
     RejectedTasksComponent,
     CompletedTasksComponent,
     AccumulatorComponent,
-    PhaseComponent
+    PhaseComponent,
+    ResultsComponent
   ],
   imports: [
-    BrowserModule
+    BrowserModule,
+    ChartsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -62,7 +62,8 @@ export interface Model {
     },
     rejectedTasks: Array<any>,
     completedTasks: Array<any>,
-    sourceTasks: Array<any>
+    sourceTasks: Array<any>,
+    results: any
 }
 
 interface ChannelModel {

@@ -3,12 +3,12 @@ import { Phase, Options, Phases, Model, ChannelStatus } from "./typings";
 import { FirstPhase } from "./first-phase";
 import { SecondPhase } from "./second-phase";
 import { Task } from "./task";
-import { Subject } from "rxjs/Subject";
-import { Observable } from "rxjs/Observable";
+import { Observable, Subject, Subscription } from "rxjs";
 import { Logger } from "./logger";
 
 export class QueuingSystem {
-
+    private timer = Observable.interval(100);
+    private counter: number;
     private firstPhase: FirstPhase;
     private secondPhase: SecondPhase;
     private onFinish$: Subject<void>;
@@ -20,7 +20,7 @@ export class QueuingSystem {
 
     constructor(
         private source: Source,
-        options: Options
+        private options: Options
     ) {
         this.onFinish$ = new Subject();
 
@@ -60,12 +60,16 @@ export class QueuingSystem {
                         }
                     })
                 }
-            }
+            },
+            results: {}
         }
     }
 
 
     public start(): void {
+        let counter = 0;
+        let countTask = 0;
+        let subscription: Subscription;
         this.firstPhase.taskOverdueInAccumulator.subscribe(() => {
             let task = this.model.queuingSystem.accumulator.tasks.shift();
             console.log('превышено время ожидания', task);
@@ -78,11 +82,11 @@ export class QueuingSystem {
 
         this.firstPhase.taskTakeFromAccumulator.subscribe((request: any) => {
             console.log('Взят из аккумулятора', request);
-            
+
             this.model.queuingSystem.firstPhase.channels[request.channelId].id = request.task.getID();
             this.model.queuingSystem.firstPhase.channels[request.channelId].state = ChannelStatus.SERVICE;
             this.model.queuingSystem.accumulator.tasks = this.model.queuingSystem.accumulator.tasks.filter(task => task.id !== request.task.getID())
-        
+
         });
 
         this.source.taskEmitter.subscribe(task => {
@@ -176,9 +180,30 @@ export class QueuingSystem {
                     this.model.queuingSystem.secondPhase.channels[request.idChannel].id = +waitingTask.task.getID();
                 }
             }
+            if (this.model.completedTasks.length + this.model.rejectedTasks.length === 100) {
+                subscription.unsubscribe();
+                this.model.results.completedTasks = this.model.completedTasks.length;
+                this.model.results.rejectedTasks = this.model.rejectedTasks.length;
+                this.model.results.absoluteThroughputOfSystem =  ((this.firstPhase.avgTimeInPhase + this.secondPhase.avgTimeInPhase ) / 20).toFixed(2);
+                this.model.results.averageTasksInSystem = (countTask / counter).toFixed(2);
+                this.model.results.a = (this.model.results.rejectedTasks / this.options.sourceTasksCount).toFixed(2);
+                this.model.results.averageTimeInAccumulator = this.firstPhase.getAvgTimeInAccumulation.toFixed(2);
+                this.model.results.maxTimeInAccumulator = this.firstPhase.getMaxTimeInAccumulation;
+            }
         });
 
         this.source.activate();
+
+        subscription = this.timer.subscribe(() => {
+            countTask =
+                this.firstPhase.getCountTaskInPhase && this.secondPhase.getCountTaskInPhase
+                    ? countTask + this.firstPhase.getCountTaskInPhase + this.secondPhase.getCountTaskInPhase
+                    : countTask;
+            counter =
+                this.firstPhase.getCountTaskInPhase && this.secondPhase.getCountTaskInPhase
+                    ? counter + 1
+                    : counter;
+        });
     }
 
     public get onFinish(): Observable<void> {

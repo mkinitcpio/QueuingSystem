@@ -36,7 +36,7 @@ export class Source {
 
     public activate(): void {
         this.intervalsEmitter$.subscribe((obj: any) => {
-            let interval = obj.interval * 100;
+            let interval = obj.interval * 10;
             let timerSubscription = Observable.timer(interval).subscribe(() => {
                 let task = new Task(obj.id);
                 if (!this.isIntervalsEmpty) {

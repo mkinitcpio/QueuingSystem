@@ -139,3 +139,4 @@ export class FirstPhase implements Phase {
     public get getMaxTimeInAccumulation(): number {
         return this.accumulator.getMaxTimeInAccumulation;
     }
+}
