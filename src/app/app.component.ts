@@ -21,9 +21,9 @@ export class AppComponent implements OnInit {
   public tasks = [];
   public completedTasks = [];
   public rejectedTasks = [];
-
+  public results = [];
   public model: Model;
-
+  public i = [];
   ngOnInit(): void {
 
     // let normalDistributionFunction = new NormalDistributionFunctionFactory().get(0.01);
@@ -43,10 +43,10 @@ export class AppComponent implements OnInit {
     //   },
     //   sourceTasksCount: 100
     // };
-
     let sources = [];
     let s = [];
-    for (let i = 0.001; i <= 0.02; i += 0.003) {
+    for (let i = 0.0001; i <= 0.02; i += 0.003) {
+      this.i.push(i);
       let normalDistributionFunction = new NormalDistributionFunctionFactory().get(i);
       let exponentialDistributionFunction = new ExponentialDistributionFunctionFactory().get(i);
       let exponentialDistributionFunction1 = new ExponentialDistributionFunctionFactory().get(0.1);
@@ -73,12 +73,11 @@ export class AppComponent implements OnInit {
     }
 
     Observable.zip(...sources).subscribe((results) => {
-      console.log(results);
+      this.results = results.sort((a: number, b: number) => b - a);
     });
 
     for (const so of s) {
       so.start();
-      console.log('start');
     }
   }
 }
