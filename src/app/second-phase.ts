@@ -9,6 +9,9 @@ export class SecondPhase implements Phase {
     private channels: Channel[] = [];
     private completed$: Subject<Completed> = new Subject();
 
+    private timeInPhase = 0;
+    private countCompletedTask = 0;
+
     constructor(channelsCount: number, distributionFunction: any) {
         this.createChannels(channelsCount, distributionFunction);
         this.onChange();
@@ -52,9 +55,16 @@ export class SecondPhase implements Phase {
     private onChange(): void {
         for (let i = 0; i < this.channels.length; i++) {
             this.channels[i].onEdit().subscribe((completed: Completed) => {
+                this.timeInPhase += completed.timeInChannel;
+                this.countCompletedTask++;
                 this.completed$.next(completed);
                 this.channels[completed.idChannel].setStatus(ChannelStatus.EMPTY);
             });
         }
+    }
+
+    public get avgTimeInPhase(): number {
+        let avgTime = this.timeInPhase / this.countCompletedTask;
+        return avgTime;
     }
 }
