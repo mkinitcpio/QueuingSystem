@@ -15,7 +15,7 @@ export class ChartComponent implements OnChanges {
   i;
   // lineChart
   public lineChartData: Array<any> = [
-    { data: [65, 59, 80, 81, 56, 55, 40], label: 'Series A' }
+    { data: [65, 59, 80, 81, 56, 55, 40], label: 'График' }
   ];
   public lineChartLabels: Array<any> = [0.0001, 0.0031, 0.0061, 0.0091, 0.0121, 0.0151, 0.0181];
   public lineChartOptions: any = {
@@ -39,6 +39,6 @@ export class ChartComponent implements OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    this.lineChartData = [{ data: this.results, label: 'Series A' }];
+    this.lineChartData = [{ data: this.results, label: 'График' }];
   }
 }

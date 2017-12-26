@@ -9,6 +9,7 @@
     height: 250px;
     overflow: auto;
     align-content: start;
+    margin-bottom: 32px;
 }
 
 .task{
