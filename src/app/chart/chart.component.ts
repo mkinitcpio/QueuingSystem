@@ -20,7 +20,7 @@ export class ChartComponent implements OnChanges {
     { data: [28, 48, 40, 19, 86, 27, 90, 84, 24, 15, 48], label: 'Series B' }
   ];
   public lineChartLabels: Array<any> = [0, 0.0001, 0.0031, 0.0061, 0.0091, 0.0121, 0.0151, 0.0181, 0.0201, 0.0221];
-  public lineRegrationChartData: Array<any> = [];
+  public lineRegressionChartData: Array<any> = [];
   public lineChartOptions: any = {
     responsive: true
   };
@@ -52,43 +52,41 @@ export class ChartComponent implements OnChanges {
     this.results.unshift(100);
     this.results.push(0);
     this.results.push(0);
-    this.generateRegrationPoints()
-    this.lineChartData = [{ data: this.results, label: 'Зависимость вероятности отказа от интенсивности потока обслуживания' },
-    { data: this.lineRegrationChartData, label: 'Регрессия' }];
+
+    this.generateRegressionPoints()
+
+    this.lineChartData = [{ data: this.results, label: 'Эксперементальная зависимость вероятности отказа от интенсивности потока обслуживания' },
+    { data: this.lineRegressionChartData, label: 'Регрессивная зависимость вероятности отказа от интенсивности потока обслуживания' }];
   }
 
-  private generateRegrationPoints() {
-    let value = [...this.results];
-    let x = [...this.lineChartLabels];
-    // let Disp = [];
-    // let SUMM = 0;
-    // let MaxDisp = 0;
-    // let Koch = 0;
-    let M = x.length;
-    let SummX = 0;
-    let SummY = 0;
-    let SummX2 = 0;
-    let SummX3 = 0;
-    let SummX4 = 0;
+  private generateRegressionPoints() {
+    let outputValue = [...this.results];
+    let inputValues = [...this.lineChartLabels];
+    let count = inputValues.length;
+    let inputValuesSum = 0;
+    let outputValuesSum = 0;
+    let inputValuesSumIn2 = 0;
+    let inputValuesSumIn3 = 0;
+    let inputValuesSumIn4 = 0;
     let XY = 0;
     let X2Y = 0;
-    for (let i = 0; i < M; i++) {
-      SummX += +x[i];
-      SummY += +value[i];
-      SummX2 += Math.pow(+x[i], 2);
-      SummX3 += Math.pow(+x[i], 3);
-      SummX4 += Math.pow(+x[i], 4);
-      XY += +value[i] * +x[i];
-      X2Y += Math.pow(+x[i], 2) * +value[i];
+    for (let i = 0; i < count; i++) {
+      inputValuesSum += +inputValues[i];
+      outputValuesSum += +outputValue[i];
+      inputValuesSumIn2 += Math.pow(+inputValues[i], 2);
+      inputValuesSumIn3 += Math.pow(+inputValues[i], 3);
+      inputValuesSumIn4 += Math.pow(+inputValues[i], 4);
+      XY += +outputValue[i] * +inputValues[i];
+      X2Y += Math.pow(+inputValues[i], 2) * +outputValue[i];
     }
-    let lambda = (SummX2 * SummX2 * SummX2 + SummX * SummX * SummX4 + M * SummX3 * SummX3 - M * SummX2 * SummX4 - SummX * SummX2 * SummX3 - SummX * SummX2 * SummX3);
-    let A = (SummY * SummX2 * SummX2 + SummX * SummX * X2Y + M * SummX3 * XY - M * SummX2 * X2Y - SummX * XY * SummX2 - SummX * SummX3 * SummY) / lambda;
-    let B = (SummX2 * XY * SummX2 + SummY * SummX * SummX4 + M * SummX3 * X2Y - M * XY * SummX4 - SummY * SummX3 * SummX2 - X2Y * SummX * SummX2) / lambda;
-    let C = (SummX2 * SummX2 * X2Y + SummX * XY * SummX4 + SummX3 * SummX3 * SummY - SummX4 * SummX2 * SummY - SummX3 * XY * SummX2 - SummX * SummX3 * X2Y) / lambda;
-    let regrationArray = [];
-    for (let i = 0; i < M; i++) {
-      regrationArray.push(Math.abs(C + B * +x[i] + A * Math.pow(+x[i], 2)));
+    let lambda = (inputValuesSumIn2 * inputValuesSumIn2 * inputValuesSumIn2 + inputValuesSum * inputValuesSum * inputValuesSumIn4 + count * inputValuesSumIn3 * inputValuesSumIn3 - count * inputValuesSumIn2 * inputValuesSumIn4 - inputValuesSum * inputValuesSumIn2 * inputValuesSumIn3 - inputValuesSum * inputValuesSumIn2 * inputValuesSumIn3);
+    let A = (outputValuesSum * inputValuesSumIn2 * inputValuesSumIn2 + inputValuesSum * inputValuesSum * X2Y + count * inputValuesSumIn3 * XY - count * inputValuesSumIn2 * X2Y - inputValuesSum * XY * inputValuesSumIn2 - inputValuesSum * inputValuesSumIn3 * outputValuesSum) / lambda;
+    let B = (inputValuesSumIn2 * XY * inputValuesSumIn2 + outputValuesSum * inputValuesSum * inputValuesSumIn4 + count * inputValuesSumIn3 * X2Y - count * XY * inputValuesSumIn4 - outputValuesSum * inputValuesSumIn3 * inputValuesSumIn2 - X2Y * inputValuesSum * inputValuesSumIn2) / lambda;
+    let C = (inputValuesSumIn2 * inputValuesSumIn2 * X2Y + inputValuesSum * XY * inputValuesSumIn4 + inputValuesSumIn3 * inputValuesSumIn3 * outputValuesSum - inputValuesSumIn4 * inputValuesSumIn2 * outputValuesSum - inputValuesSumIn3 * XY * inputValuesSumIn2 - inputValuesSum * inputValuesSumIn3 * X2Y) / lambda;
+    let regressionArray = [];
+    for (let i = 0; i < count; i++) {
+      regressionArray.push(Math.abs(C + B * +inputValues[i] + A * Math.pow(+inputValues[i], 2)));
     }
-    this.lineRegrationChartData = regrationArray;
+    this.lineRegressionChartData = regressionArray;
   }
 }
