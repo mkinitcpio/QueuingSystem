@@ -1,4 +1,4 @@
-.queuing-system{
+/* .queuing-system{
     display: flex;
 }
 
@@ -37,4 +37,19 @@
 
 app-source-tasks{
     margin-right: 32px;
+} */
+
+.content{
+    display: flex;
+    flex-direction: row;
+}
+
+.characteristics{
+    width: 400px;
+}
+
+.logger{
+    margin: 10px 0 0 0;
+    overflow: auto;
+    height: 500px;
 }

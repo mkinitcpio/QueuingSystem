@@ -88,22 +88,30 @@ export class QueuingSystem {
 
         this.source.taskEmitter.subscribe(task => {
             this.model.sourceTasks.shift();
-            Logger.newTaskAppeared(task.getID());
+            if (this.options.sourceTasksCount === 1000) {
+                Logger.newTaskAppeared(task.getID());
+            }
             let request = this.firstPhase.setTask(task);
             if (request.isStartProcessing) {
                 if (request.idChannel === -1) {
-                    Logger.addTaskToAccumulator(task.getID(), Phases.First);
+                    if (this.options.sourceTasksCount === 1000) {
+                        Logger.addTaskToAccumulator(task.getID(), Phases.First);
+                    }
                     this.model.queuingSystem.accumulator.tasks.push({
                         id: task.getID()
                     });
                 } else {
-                    Logger.startProcessingTask(task.getID(), Phases.First, request.idChannel);
+                    if (this.options.sourceTasksCount === 1000) {
+                        Logger.startProcessingTask(task.getID(), Phases.First, request.idChannel);
+                    }
 
                     this.model.queuingSystem.firstPhase.channels[request.idChannel].state = ChannelStatus.SERVICE;
                     this.model.queuingSystem.firstPhase.channels[request.idChannel].id = +task.getID();
                 }
             } else {
-                Logger.rejectTask(task.getID(), Phases.First);
+                if (this.options.sourceTasksCount === 1000) {
+                    Logger.rejectTask(task.getID(), Phases.First);
+                }
                 this.model.rejectedTasks.push({
                     id: task.getID()
                 });
@@ -115,12 +123,14 @@ export class QueuingSystem {
         });
 
         this.firstPhase.getCompleted().subscribe(completed => {
-            Logger.onCompletedTask(
-                Phases.First,
-                completed.idChannel,
-                completed.task.getID(),
-                completed.timeInChannel
-            );
+            if (this.options.sourceTasksCount === 1000) {
+                Logger.onCompletedTask(
+                    Phases.First,
+                    completed.idChannel,
+                    completed.task.getID(),
+                    completed.timeInChannel
+                );
+            }
             this.model.queuingSystem.firstPhase.channels[completed.idChannel].state = ChannelStatus.EMPTY;
             this.model.queuingSystem.firstPhase.channels[completed.idChannel].id = null;
 
@@ -131,10 +141,13 @@ export class QueuingSystem {
 
                 this.model.queuingSystem.secondPhase.channels[request.idChannel].state = ChannelStatus.SERVICE;
                 this.model.queuingSystem.secondPhase.channels[request.idChannel].id = +completed.task.getID();
-
-                Logger.startProcessingTask(completed.task.getID(), Phases.Second, request.idChannel);
+                if (this.options.sourceTasksCount === 1000) {
+                    Logger.startProcessingTask(completed.task.getID(), Phases.Second, request.idChannel);
+                }
             } else {
-                Logger.rejectTask(completed.task.getID(), Phases.Second);
+                if (this.options.sourceTasksCount === 1000) {
+                    Logger.rejectTask(completed.task.getID(), Phases.Second);
+                }
                 this.firstPhase.block(completed.idChannel, true);
 
                 this.model.queuingSystem.firstPhase.channels[completed.idChannel].state = ChannelStatus.BLOCK;
@@ -144,30 +157,36 @@ export class QueuingSystem {
                     channelId: completed.idChannel,
                     task: completed.task
                 });
-                Logger.blockChannel(Phases.First, completed.idChannel);
+                if (this.options.sourceTasksCount === 1000) {
+                    Logger.blockChannel(Phases.First, completed.idChannel);
+                }
             }
         });
 
         this.secondPhase.getCompleted().subscribe(completed => {
-            Logger.onCompletedTask(
-                Phases.Second,
-                completed.idChannel,
-                completed.task.getID(),
-                completed.timeInChannel
-            );
-
+            if (this.options.sourceTasksCount === 1000) {
+                Logger.onCompletedTask(
+                    Phases.Second,
+                    completed.idChannel,
+                    completed.task.getID(),
+                    completed.timeInChannel
+                );
+            }
             this.model.queuingSystem.secondPhase.channels[completed.idChannel].state = ChannelStatus.EMPTY;
             this.model.queuingSystem.secondPhase.channels[completed.idChannel].id = null;
 
-            Logger.successfullyCompletedTask(completed.task.getID(), Phases.Second);
-
+            if (this.options.sourceTasksCount === 1000) {
+                Logger.successfullyCompletedTask(completed.task.getID(), Phases.Second);
+            }
             this.model.completedTasks.push({ id: completed.task.getID() });
 
             if (this.waitingTasks.length != 0) {
                 let waitingTask = this.waitingTasks.shift();
                 let request = this.secondPhase.setTask(waitingTask.task);
                 if (request.isStartProcessing) {
-                    Logger.unblockChannel(Phases.First, waitingTask.channelId);
+                    if (this.options.sourceTasksCount === 1000) {
+                        Logger.unblockChannel(Phases.First, waitingTask.channelId);
+                    }
                     this.firstPhase.block(waitingTask.channelId, false);
 
                     this.model.queuingSystem.firstPhase.channels[waitingTask.channelId].state = ChannelStatus.EMPTY;
@@ -177,11 +196,11 @@ export class QueuingSystem {
                     this.model.queuingSystem.secondPhase.channels[request.idChannel].id = +waitingTask.task.getID();
                 }
             }
-            if (this.model.completedTasks.length + this.model.rejectedTasks.length === 100) {
+            if (this.model.completedTasks.length + this.model.rejectedTasks.length === this.options.sourceTasksCount) {
                 subscription.unsubscribe();
                 this.model.results.completedTasks = this.model.completedTasks.length;
                 this.model.results.rejectedTasks = this.model.rejectedTasks.length;
-                this.model.results.absoluteThroughputOfSystem = ((this.firstPhase.avgTimeInPhase + this.secondPhase.avgTimeInPhase) / 20).toFixed(2);
+                this.model.results.absoluteThroughputOfSystem = (0.05 * (this.firstPhase.avgTimeInPhase + this.secondPhase.avgTimeInPhase) / 20).toFixed(2);
                 this.model.results.averageTasksInSystem = (countTask / counter).toFixed(2);
                 this.model.results.a = ((this.model.results.rejectedTasks / this.options.sourceTasksCount) * 100).toFixed(2);
                 this.model.results.averageTimeInAccumulator = this.firstPhase.getAvgTimeInAccumulation.toFixed(2);

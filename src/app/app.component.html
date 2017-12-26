@@ -1,22 +1,54 @@
-<div *ngIf='isStarted'>
-    <div class='queuing-system'>
-        <app-source-tasks [tasks]='model.sourceTasks'></app-source-tasks>
-        <app-queuing-system [model]='model'></app-queuing-system>
-        <app-completed-tasks [completedTasks]='model.completedTasks'></app-completed-tasks>
+<!-- <div *ngIf='isReady && isShowStatistics' class='dialog'>
+        <div class='close-button' (click)='closeDialog()'>
+            X
+        </div>
+        <app-results [results]='model.results'></app-results>
+        <app-chart [results]='results' [i]='i'></app-chart>
+    </div> -->
+
+<div class="conteiner">
+    <div class="nab-bar">
+        <button (click)='start()'>Запустить</button>
+        <button (click)='showLog()'>Логи</button>
     </div>
-    <app-rejected-tasks [rejectedTasks]='model.rejectedTasks'></app-rejected-tasks>
-</div>
+    <div class="content">
+        <div class="characteristics">
+            <h3 class="title">Сгенерированные заявки: {{model.sourceTasks.length}}</h3>
+            <h3 class="title">Обработанные заявки: {{model.completedTasks.length}}</h3>
+            <h3 class='title'>Отклоненные заявки: {{model.rejectedTasks.length}}</h3>
+            <div class='result'>
+                <div>Количество обработанных заявок:
+                    <span>{{model.results.completedTasks}}</span>
+                </div>
+                <div>Количество отклоненных заявок:
+                    <span>{{model.results.rejectedTasks}}</span>
+                </div>
+                <div>Вероятность отказа заявки:
+                    <span>{{model.results.a}} %</span>
+                </div>
+                <div>Среднее время нахождения в накопителе:
+                    <span>{{model.results.averageTimeInAccumulator}} ms.</span>
+                </div>
+                <div>Максимальное время нахождения в накопипете:
+                    <span>{{model.results.maxTimeInAccumulator}} ms.</span>
+                </div>
+                <div>Среднее число заявок, находящихся в системе:
+                    <span>{{model.results.averageTasksInSystem}}</span>
+                </div>
+                <div>Абсолютная пропускная способность системы:
+                    <span>{{model.results.absoluteThroughputOfSystem}} ms.</span>
+                </div>
 
-<div *ngIf='isReady && isShowStatistics' class='dialog'>
-    <div class='close-button' (click)='closeDialog()'>
-        X
+            </div>
+            <div class='logger-container'>
+                <h3>Логи</h3>
+                <div class="logger" id='log'></div>
+            </div>
+        </div>
+        <div class="chart">
+            <div *ngIf='isReady' class='dialog'>
+                <app-chart [results]='results' [i]='i'></app-chart>
+            </div>
+        </div>
     </div>
-    <app-results  [results]='model.results'>
-
-    </app-results>
-    <app-chart [results]='results' [i]='i'></app-chart>
 </div>
-
-
-<button (click)='showStatistics()' [disabled]='!isReady'>Показать статистику</button>
-<button (click)='start()'>Запустить</button>

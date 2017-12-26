@@ -1,3 +1,5 @@
+import { Controller } from './controller';
+
 export class Logger {
     static write(text: string): void {
         //console.log(text);
@@ -6,7 +8,12 @@ export class Logger {
     static newTaskAppeared(
         taskId: string
     ): void {
-        // console.log(`Заявка ${taskId} появилась в системе.`);
+        if (Controller.getState()) {
+            let element = document.querySelector('#log');
+            let newLog = `<div>Заявка ${taskId} появилась в системе.</div>`
+            element.innerHTML += newLog;
+            // console.log(`Заявка ${taskId} появилась в системе.`);
+        }
     }
 
     static startProcessingTask(
@@ -14,7 +21,12 @@ export class Logger {
         phaseId: number,
         channelId: number
     ): void {
-        // console.log(`Заявка ${taskId} начала обрабатываться в фазе ${phaseId} каналом ${channelId}.`);
+        if (Controller.getState()) {
+            let element = document.querySelector('#log');
+            let newLog = `<div>Заявка ${taskId} начала обрабатываться в фазе ${phaseId} каналом ${channelId}.</div>`
+            element.innerHTML += newLog;
+            // console.log(`Заявка ${taskId} начала обрабатываться в фазе ${phaseId} каналом ${channelId}.`);
+        }
     }
 
     static onCompletedTask(
@@ -23,47 +35,82 @@ export class Logger {
         taskId: string,
         time: number
     ): void {
-        // console.log(`Заявка ${taskId} обработана фазой ${phaseId} каналом ${channelId} за время ${time}ms.`);
+        if (Controller.getState()) {
+            let element = document.querySelector('#log');
+            let newLog = `<div>Заявка ${taskId} обработана фазой ${phaseId} каналом ${channelId} за время ${time} ms.</div>`
+            element.innerHTML += newLog;
+            // console.log(`Заявка ${taskId} обработана фазой ${phaseId} каналом ${channelId} за время ${time}ms.`);
+        }
     }
 
     static addTaskToAccumulator(
         taskId: string,
         phaseId: number
     ): void {
-        //console.log(`Заявка ${taskId} ожидает в очереди ${phaseId} фазы.`);
+        if (Controller.getState()) {
+            let element = document.querySelector('#log');
+            let newLog = `<div>Заявка ${taskId} ожидает в очереди ${phaseId} фазы.</div>`
+            element.innerHTML += newLog;
+            //console.log(`Заявка ${taskId} ожидает в очереди ${phaseId} фазы.`);
+        }
     };
 
     static resultTimeOfProcessingTask(
         time: number
     ): void {
-        //console.log(`Время обработки заявки: ${time}.`);
+        if (Controller.getState()) {
+            let element = document.querySelector('#log');
+            let newLog = `<div>Время обработки заявки: ${time}.</div>`
+            element.innerHTML += newLog;
+            //console.log(`Время обработки заявки: ${time}.`);
+        }
     }
 
     static blockChannel(
         phaseId: number,
         channelId: number
     ): void {
-        //console.log(`Блокировка канала: ${channelId} в ${phaseId} фазе.`);
+        if (Controller.getState()) {
+            let element = document.querySelector('#log');
+            let newLog = `<div>Блокировка канала: ${channelId} в ${phaseId} фазе.</div>`
+            element.innerHTML += newLog;
+            //console.log(`Блокировка канала: ${channelId} в ${phaseId} фазе.`);
+        }
     }
 
     static unblockChannel(
         phaseId: number,
         channelId: number
     ): void {
-        //console.log(`Разблокировка канала: ${channelId} в ${phaseId} фазе.`);
+        if (Controller.getState()) {
+            let element = document.querySelector('#log');
+            let newLog = `<div>Разблокировка канала: ${channelId} в ${phaseId} фазе.</div>`
+            element.innerHTML += newLog;
+            //console.log(`Разблокировка канала: ${channelId} в ${phaseId} фазе.`);
+        }
     }
 
     static rejectTask(
         taskId: string,
         phaseId: number
     ): void {
-        //console.log(`Заявка ${taskId} отклонена фазой ${phaseId}.`);
+        if (Controller.getState()) {
+            let element = document.querySelector('#log');
+            let newLog = `<div>Заявка ${taskId} отклонена фазой ${phaseId}.</div>`
+            element.innerHTML += newLog;
+            //console.log(`Заявка ${taskId} отклонена фазой ${phaseId}.`);
+        }
     }
 
     static successfullyCompletedTask(
         taskId: string,
         phaseId: number
     ): void {
-        // console.log(`Заявка ${taskId} успешно обработана системой.`);
+        if (Controller.getState()) {
+            let element = document.querySelector('#log');
+            let newLog = `<div>Заявка ${taskId} успешно обработана системой.</div>`
+            element.innerHTML += newLog;
+            // console.log(`Заявка ${taskId} успешно обработана системой.`);
+        }
     }
 }
