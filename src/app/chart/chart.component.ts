@@ -26,19 +26,19 @@ export class ChartComponent implements OnChanges {
   };
   public lineChartColors: Array<any> = [
     { // grey
-      backgroundColor: 'rgba(148,159,177,0.2)',
-      borderColor: 'rgba(148,159,177,1)',
-      pointBackgroundColor: 'rgba(148,159,177,1)',
+      backgroundColor: 'rgba(241,11,22,0.2)',
+      borderColor: 'rgba(241,11,22,1)',
+      pointBackgroundColor: 'rgba(241,11,22,1)',
       pointBorderColor: '#fff',
       pointHoverBackgroundColor: '#fff',
-      pointHoverBorderColor: 'rgba(148,159,177,0.8)'
-    }, { // dark grey
-      backgroundColor: 'rgba(77,83,96,0.2)',
-      borderColor: 'rgba(77,83,96,1)',
-      pointBackgroundColor: 'rgba(77,83,96,1)',
+      pointHoverBorderColor: 'rgba(241,11,22,0.8)'
+    }, {
+      backgroundColor: 'rgba(16,5,231,0.2)',
+      borderColor: 'rgba(16,5,231,1)',
+      pointBackgroundColor: 'rgba(16,5,231,1)',
       pointBorderColor: '#fff',
       pointHoverBackgroundColor: '#fff',
-      pointHoverBorderColor: 'rgba(77,83,96,1)'
+      pointHoverBorderColor: 'rgba(16,5,231,1)'
     }
   ];
   public lineChartLegend: boolean = true;

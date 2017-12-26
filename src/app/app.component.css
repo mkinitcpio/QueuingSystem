@@ -53,3 +53,7 @@ app-source-tasks{
     overflow: auto;
     height: 500px;
 }
+
+.chart{
+    flex-grow: 1;
+}
