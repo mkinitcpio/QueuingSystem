@@ -177,13 +177,13 @@ export class QueuingSystem {
                     this.model.queuingSystem.secondPhase.channels[request.idChannel].id = +waitingTask.task.getID();
                 }
             }
-            if (this.model.completedTasks.length + this.model.rejectedTasks.length === 100) {
+            if (this.model.completedTasks.length + this.model.rejectedTasks.length === this.options.sourceTasksCount) {
                 subscription.unsubscribe();
                 this.model.results.completedTasks = this.model.completedTasks.length;
                 this.model.results.rejectedTasks = this.model.rejectedTasks.length;
                 this.model.results.absoluteThroughputOfSystem = ((this.firstPhase.avgTimeInPhase + this.secondPhase.avgTimeInPhase) / 20).toFixed(2);
                 this.model.results.averageTasksInSystem = (countTask / counter).toFixed(2);
-                this.model.results.a = ((this.model.results.rejectedTasks / this.options.sourceTasksCount) * 100).toFixed(2);
+                this.model.results.a = ((this.model.results.rejectedTasks / this.options.sourceTasksCount) * 100).toFixed(0);
                 this.model.results.averageTimeInAccumulator = this.firstPhase.getAvgTimeInAccumulation.toFixed(2);
                 this.model.results.maxTimeInAccumulator = this.firstPhase.getMaxTimeInAccumulation;
                 this.onEnd.next(this.model.results.a);

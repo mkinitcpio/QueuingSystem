@@ -5,6 +5,11 @@
 .queuing-system{
     display: flex;
     width: 100%;
-    border: 1px solid black;
     padding: 16px;
+    border: 3px rgb(214, 181, 176) solid;
+    justify-content: space-around;
+}
+
+app-phase{
+    display: flex;
 }

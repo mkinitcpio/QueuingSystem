@@ -11,12 +11,27 @@
     <div class='close-button' (click)='closeDialog()'>
         X
     </div>
-    <app-results  [results]='model.results'>
+    <app-results [results]='model.results'>
 
     </app-results>
     <app-chart [results]='results' [i]='i'></app-chart>
 </div>
 
 
-<button (click)='showStatistics()' [disabled]='!isReady'>Показать статистику</button>
+<button class='button' (click)='showStatistics()' [disabled]='!isReady'>Показать статистику</button>
 <button (click)='start()'>Запустить</button>
+
+<div *ngIf='isRunning' class='loader'>
+    <div class='loader-title'>
+        <div *ngIf='!isReady'>
+                {{titleText[0]}}
+        </div>
+        <div *ngIf='isReady'>
+                {{titleText[1]}}
+        </div>
+    </div>
+    <div class="spinner">
+        <div class="double-bounce1"></div>
+        <div class="double-bounce2"></div>
+    </div>
+</div>

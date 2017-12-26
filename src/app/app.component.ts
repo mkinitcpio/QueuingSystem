@@ -26,10 +26,16 @@ export class AppComponent implements OnInit {
   public model: Model;
   public i = [];
 
+  public titleText = [
+    'Моделирование системы очереди...',
+    'Расчет графиков и результатов моделирования...'
+  ]
+
   public isReady = false;
   public isStarted = false;
   public isShowChart = false;
   public isShowStatistics = false;
+  public isRunning = false;
   ngOnInit(): void {
 
     // let normalDistributionFunction = new NormalDistributionFunctionFactory().get(0.01);
@@ -61,15 +67,16 @@ export class AppComponent implements OnInit {
   public start(): void {
     this.isReady = false;
     this.isStarted = true;
-    let normalDistributionFunction = new NormalDistributionFunctionFactory().get(0.001);
-    let exponentialDistributionFunction = new ExponentialDistributionFunctionFactory().get(0.001);
-    let exponentialDistributionFunction1 = new ExponentialDistributionFunctionFactory().get(0.05);
+    this.isRunning = true;
+    let normalDistributionFunction = new NormalDistributionFunctionFactory().get(0.002);
+    let exponentialDistributionFunction = new ExponentialDistributionFunctionFactory().get(0.002);
+    let exponentialDistributionFunction1 = new ExponentialDistributionFunctionFactory().get(0.2);
     let source = new Source(100, exponentialDistributionFunction1);
     let options: Options = {
       firstPhase: {
         accumulatorCapacity: 9,
         channelCount: 5,
-        maxWaitingTime: 3000,
+        maxWaitingTime: 1000,
         distributionFunction: normalDistributionFunction
       },
       secondPhase: {
@@ -85,6 +92,7 @@ export class AppComponent implements OnInit {
     this.model = system.getModel();
     system.start();
     system.onEnd.subscribe(()=>{
+      this.isReady = true;
       this.generateChartsData();
     });
   }
@@ -96,7 +104,7 @@ export class AppComponent implements OnInit {
       this.i.push(i);
       let normalDistributionFunction = new NormalDistributionFunctionFactory().get(i);
       let exponentialDistributionFunction = new ExponentialDistributionFunctionFactory().get(i);
-      let exponentialDistributionFunction1 = new ExponentialDistributionFunctionFactory().get(0.1);
+      let exponentialDistributionFunction1 = new ExponentialDistributionFunctionFactory().get(0.2);
       let source = new Source(100, exponentialDistributionFunction1);
       let options: Options = {
         firstPhase: {
@@ -118,10 +126,10 @@ export class AppComponent implements OnInit {
       sources.push(system.onEnd);
       s.push(system);
     }
-
     Observable.zip(...sources).subscribe((results) => {
       this.results = results.sort((a: number, b: number) => b - a);
-      this.isReady = true;
+      console.log(this.results);
+      this.isRunning = false;
     });
 
     for (const so of s) {
