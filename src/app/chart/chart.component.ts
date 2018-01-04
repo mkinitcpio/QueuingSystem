@@ -19,7 +19,7 @@ export class ChartComponent implements OnChanges {
     { data: [65, 59, 80, 81, 56, 55, 40, 57, 31, 15, 46], label: 'A' },
     { data: [28, 48, 40, 19, 86, 27, 90, 84, 24, 15, 48], label: 'Series B' }
   ];
-  public lineChartLabels: Array<any> = [0, 0.0001, 0.0031, 0.0061, 0.0091, 0.0121, 0.0151, 0.0181, 0.0201, 0.0221];
+  public lineChartLabels: Array<any> = [ 0.0001, 0.0031, 0.0061, 0.0091, 0.0121, 0.0151, 0.0181, 0.0201, 0.0221];
   public lineRegressionChartData: Array<any> = [];
   public lineChartOptions: any = {
     responsive: true
@@ -49,7 +49,6 @@ export class ChartComponent implements OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    this.results.unshift(100);
     this.results.push(0);
     this.results.push(0);
 

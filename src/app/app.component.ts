@@ -31,29 +31,8 @@ export class AppComponent implements OnInit {
   public isStarted = false;
   public isShowChart = false;
   public isShowStatistics = false;
-  ngOnInit(): void {
 
-    // let normalDistributionFunction = new NormalDistributionFunctionFactory().get(0.01);
-    // let exponentialDistributionFunction = new ExponentialDistributionFunctionFactory().get(0.02);
-    // let exponentialDistributionFunction1 = new ExponentialDistributionFunctionFactory().get(1);
-    // let source = new Source(100, exponentialDistributionFunction1);
-    // let options: Options = {
-    //   firstPhase: {
-    //     accumulatorCapacity: 9,
-    //     channelCount: 5,
-    //     maxWaitingTime: 1000,
-    //     distributionFunction: normalDistributionFunction
-    //   },
-    //   secondPhase: {
-    //     channelCount: 6,
-    //     distributionFunction: exponentialDistributionFunction
-    //   },
-    //   sourceTasksCount: 100
-    // };
-    // let sources = [];
-    // let s = [];
-
-  }
+  ngOnInit(): void {  }
 
   public showStatistics(): void {
     this.isShowStatistics = true;
@@ -62,13 +41,13 @@ export class AppComponent implements OnInit {
   public start(): void {
     this.isReady = false;
     this.isStarted = true;
-    let normalDistributionFunction = new NormalDistributionFunctionFactory().get(0.002);
-    let exponentialDistributionFunction = new ExponentialDistributionFunctionFactory().get(0.002);
-    let exponentialDistributionFunction1 = new ExponentialDistributionFunctionFactory().get(0.1);
+    let normalDistributionFunction = new NormalDistributionFunctionFactory().get(0.02);
+    let exponentialDistributionFunction = new ExponentialDistributionFunctionFactory().get(0.02);
+    let exponentialDistributionFunction1 = new ExponentialDistributionFunctionFactory().get(0.2);
     let source = new Source(1000, exponentialDistributionFunction1);
     let options: Options = {
       firstPhase: {
-        accumulatorCapacity: 9,
+        accumulatorCapacity: 8,
         channelCount: 7,
         maxWaitingTime: 3000,
         distributionFunction: normalDistributionFunction
