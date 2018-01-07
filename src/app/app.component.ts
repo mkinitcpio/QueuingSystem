@@ -37,27 +37,6 @@ export class AppComponent implements OnInit {
   public isShowStatistics = false;
   public isRunning = false;
   ngOnInit(): void {
-
-    // let normalDistributionFunction = new NormalDistributionFunctionFactory().get(0.01);
-    // let exponentialDistributionFunction = new ExponentialDistributionFunctionFactory().get(0.02);
-    // let exponentialDistributionFunction1 = new ExponentialDistributionFunctionFactory().get(1);
-    // let source = new Source(100, exponentialDistributionFunction1);
-    // let options: Options = {
-    //   firstPhase: {
-    //     accumulatorCapacity: 9,
-    //     channelCount: 5,
-    //     maxWaitingTime: 1000,
-    //     distributionFunction: normalDistributionFunction
-    //   },
-    //   secondPhase: {
-    //     channelCount: 6,
-    //     distributionFunction: exponentialDistributionFunction
-    //   },
-    //   sourceTasksCount: 100
-    // };
-    // let sources = [];
-    // let s = [];
-    
   }
 
   public showStatistics(): void {
@@ -68,22 +47,22 @@ export class AppComponent implements OnInit {
     this.isReady = false;
     this.isStarted = true;
     this.isRunning = true;
-    let normalDistributionFunction = new NormalDistributionFunctionFactory().get(0.002);
-    let exponentialDistributionFunction = new ExponentialDistributionFunctionFactory().get(0.002);
-    let exponentialDistributionFunction1 = new ExponentialDistributionFunctionFactory().get(0.2);
-    let source = new Source(100, exponentialDistributionFunction1);
+    let normalDistributionFunction = new ExponentialDistributionFunctionFactory().get(0.003);
+    let exponentialDistributionFunction = new ExponentialDistributionFunctionFactory().get(0.003);
+    let exponentialDistributionFunction1 = new ExponentialDistributionFunctionFactory().get(0.25);
+    let source = new Source(1000, exponentialDistributionFunction1);
     let options: Options = {
       firstPhase: {
-        accumulatorCapacity: 9,
-        channelCount: 5,
-        maxWaitingTime: 1000,
+        accumulatorCapacity: 14,
+        channelCount: 3,
+        maxWaitingTime: 100,
         distributionFunction: normalDistributionFunction
       },
       secondPhase: {
         channelCount: 6,
         distributionFunction: exponentialDistributionFunction
       },
-      sourceTasksCount: 100
+      sourceTasksCount: 1000
     };
     let system = new QueuingSystem(
       source,
@@ -100,17 +79,17 @@ export class AppComponent implements OnInit {
   generateChartsData(): any {
     let sources = [];
     let s = [];
-    for (let i = 0.0001; i <= 0.02; i += 0.003) {
+    for (let i = 0.20; i <= 9.1; i += 0.3) {
       this.i.push(i);
-      let normalDistributionFunction = new NormalDistributionFunctionFactory().get(i);
+      let normalDistributionFunction = new NormalDistributionFunctionFactory().get(0.2 / 3);
       let exponentialDistributionFunction = new ExponentialDistributionFunctionFactory().get(i);
-      let exponentialDistributionFunction1 = new ExponentialDistributionFunctionFactory().get(0.2);
+      let exponentialDistributionFunction1 = new ExponentialDistributionFunctionFactory().get(i);
       let source = new Source(100, exponentialDistributionFunction1);
       let options: Options = {
         firstPhase: {
-          accumulatorCapacity: 9,
-          channelCount: 5,
-          maxWaitingTime: 1000,
+          accumulatorCapacity: 14,
+          channelCount: 3,
+          maxWaitingTime: 100,
           distributionFunction: normalDistributionFunction
         },
         secondPhase: {
