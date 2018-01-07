@@ -27,12 +27,18 @@ export class AppComponent implements OnInit {
   public model: Model;
   public i = [];
 
+  public titleText = [
+    'Моделирование системы очереди...',
+    'Расчет графиков и результатов моделирования...'
+  ]
+
   public isReady = false;
   public isStarted = false;
   public isShowChart = false;
   public isShowStatistics = false;
-
-  ngOnInit(): void {  }
+  public isRunning = false;
+  ngOnInit(): void {
+  }
 
   public showStatistics(): void {
     this.isShowStatistics = true;
@@ -41,15 +47,16 @@ export class AppComponent implements OnInit {
   public start(): void {
     this.isReady = false;
     this.isStarted = true;
-    let normalDistributionFunction = new NormalDistributionFunctionFactory().get(0.02);
-    let exponentialDistributionFunction = new ExponentialDistributionFunctionFactory().get(0.02);
-    let exponentialDistributionFunction1 = new ExponentialDistributionFunctionFactory().get(0.2);
+    this.isRunning = true;
+    let normalDistributionFunction = new ExponentialDistributionFunctionFactory().get(0.003);
+    let exponentialDistributionFunction = new ExponentialDistributionFunctionFactory().get(0.003);
+    let exponentialDistributionFunction1 = new ExponentialDistributionFunctionFactory().get(0.25);
     let source = new Source(1000, exponentialDistributionFunction1);
     let options: Options = {
       firstPhase: {
-        accumulatorCapacity: 8,
-        channelCount: 7,
-        maxWaitingTime: 3000,
+        accumulatorCapacity: 14,
+        channelCount: 3,
+        maxWaitingTime: 100,
         distributionFunction: normalDistributionFunction
       },
       secondPhase: {
@@ -64,7 +71,8 @@ export class AppComponent implements OnInit {
     );
     this.model = system.getModel();
     system.start();
-    system.onEnd.subscribe(() => {
+    system.onEnd.subscribe(()=>{
+      this.isReady = true;
       this.generateChartsData();
     });
   }
@@ -72,17 +80,17 @@ export class AppComponent implements OnInit {
   generateChartsData(): any {
     let sources = [];
     let s = [];
-    for (let i = 0.0001; i <= 0.02; i += 0.003) {
+    for (let i = 0.20; i <= 9.1; i += 0.3) {
       this.i.push(i);
-      let normalDistributionFunction = new NormalDistributionFunctionFactory().get(i);
+      let normalDistributionFunction = new NormalDistributionFunctionFactory().get(0.2 / 3);
       let exponentialDistributionFunction = new ExponentialDistributionFunctionFactory().get(i);
-      let exponentialDistributionFunction1 = new ExponentialDistributionFunctionFactory().get(0.1);
+      let exponentialDistributionFunction1 = new ExponentialDistributionFunctionFactory().get(i);
       let source = new Source(100, exponentialDistributionFunction1);
       let options: Options = {
         firstPhase: {
-          accumulatorCapacity: 9,
-          channelCount: 5,
-          maxWaitingTime: 1000,
+          accumulatorCapacity: 14,
+          channelCount: 3,
+          maxWaitingTime: 100,
           distributionFunction: normalDistributionFunction
         },
         secondPhase: {
@@ -98,10 +106,10 @@ export class AppComponent implements OnInit {
       sources.push(system.onEnd);
       s.push(system);
     }
-
     Observable.zip(...sources).subscribe((results) => {
       this.results = results.sort((a: number, b: number) => b - a);
-      this.isReady = true;
+      console.log(this.results);
+      this.isRunning = false;
     });
 
     for (const so of s) {

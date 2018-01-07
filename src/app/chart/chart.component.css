@@ -3,3 +3,10 @@
     height: 500px;
     width: 800px;
 }
+
+.title{
+    font-family: 'Segoe UI';
+    font-size: x-large;
+    width: 450px;
+    margin-bottom: 16px;
+}

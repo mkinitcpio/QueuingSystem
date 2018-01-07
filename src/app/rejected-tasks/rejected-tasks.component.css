@@ -6,12 +6,21 @@
     width: 500px;
     display: flex;
     flex-wrap: wrap;
+    height: 250px;
+    overflow: auto;
+    align-content: start;
+    margin-bottom: 32px;
 }
 
 .task{
-    box-sizing: border-box;
     height: 30px;
     width: 30px;
-    background-color: green;
+    background-color: rgb(214, 181, 176);
     border: 1px solid white;
+    display: flex;
+    align-content: center;
+    justify-content: center;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-weight: 600;
+    color: rgb(71, 71, 71);
 }
